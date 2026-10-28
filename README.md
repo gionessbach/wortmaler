@@ -12,14 +12,14 @@ Eine einfache Web-App fürs iPad, die Kinder (5–6 Jahre) zum Schreiben animier
 - **Satzzeichen:** Ab drei Wörtern setzt die App automatisch einen Punkt oder, bei Fragen, ein Fragezeichen. Satzzeichen lassen sich auch ansagen: „Punkt“, „Komma“, „Fragezeichen“, „Ausrufezeichen“.
 - **Vorlesen:** Ein Wort antippen, und es wird vorgelesen.
 - **Buchstabieren** (Lautsprecher-Knopf): Ein Wort antippen, und es wird Buchstabe für Buchstabe aufgesagt, der jeweilige Buchstabe leuchtet dabei auf. Danach wird das ganze Wort gesprochen.
-- **Profi-Modus** (Stern-Knopf): Wort sagen, ansehen und merken. Nach Ablauf des blauen Balkens wird es verdeckt, das Kind schreibt es auf Papier und deckt dann mit dem Augen-Knopf auf, um zu vergleichen.
+- **Profi-Modus** (Stern-Knopf): Wort sagen, ansehen und merken. Nach Ablauf des blauen Balkens wird es verdeckt, das Kind schreibt es auf Papier und deckt dann mit dem Augen-Knopf auf, um zu vergleichen. Im Profi-Modus erscheinen zwei zusätzliche Knöpfe:
+  - **Silbenfarben** (Silbenbögen): Silben abwechselnd blau und rot, wie bei der Silbenmethode.
+  - **Schreiblinien** (Linien): Die Wörter stehen auf Linien wie im Schulheft.
 - **Löschen:** Pfeil unten links löscht das letzte Wort. Der Mülleimer löscht alles (zweimal tippen).
 - **Wortfilter:** Gängige Schimpfwörter werden als *** angezeigt und nicht vorgelesen.
 
 ### Einstellungen (Zahnrad)
 
-- **Silbenfarben:** Silben abwechselnd blau und rot, wie bei der Silbenmethode.
-- **Schreiblinien:** Die Wörter stehen auf Linien wie im Schulheft.
 - **Buchstaben nacheinander:** Neue Wörter bauen sich Buchstabe für Buchstabe auf.
 - **Satzzeichen automatisch:** ein- und ausschaltbar.
 - **Arbeitsblatt drucken:** Alle gesammelten Wörter mit Schreiblinien und zwei leeren Zeilen zum Nachschreiben.

@@ -8,6 +8,8 @@
 <meta name="apple-mobile-web-app-title" content="Wortmaler">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#F4F7FB">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="favicon.png">
 <title>Wortmaler</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -67,6 +69,7 @@
   .round:disabled{opacity:.35}
   .round[aria-pressed="true"],.pill[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
   .pill[aria-pressed="true"] svg{color:#FFD23F}
+  #sylBtn[aria-pressed="true"]{background:#E6EEFC;border-color:var(--syl-a)}
   .round.armed{background:var(--mic-on);border-color:var(--mic-on);color:#fff}
   button:focus-visible{outline:4px solid #7AA7FF;outline-offset:3px}
 
@@ -187,6 +190,12 @@
       <button id="modeUpper" type="button" aria-pressed="false">ABC</button>
     </div>
     <div class="group">
+      <button id="sylBtn" class="round" type="button" aria-pressed="false" aria-label="Silbenfarben" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round"><path d="M2.5 14a4.5 4.5 0 0 0 9 0" stroke="#1E5BD8"/><path d="M12.5 14a4.5 4.5 0 0 0 9 0" stroke="#D62839"/></svg>
+      </button>
+      <button id="linesBtn" class="round" type="button" aria-pressed="false" aria-label="Schreiblinien" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M3 5h18M3 10h18M3 19h18" stroke-width="1.6"/><path d="M3 15h18" stroke-width="2.8"/></svg>
+      </button>
       <button id="spellBtn" class="round" type="button" aria-pressed="false" aria-label="Buchstabieren">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19.5 5.5a9 9 0 0 1 0 13"/></svg>
       </button>
@@ -237,8 +246,6 @@
       <h2 id="panelTitle">Einstellungen</h2>
       <button id="closeBtn" class="x" type="button" aria-label="Schließen">✕</button>
     </div>
-    <label class="opt" for="optSyl"><span>Silbenfarben<small>Silben abwechselnd blau und rot</small></span><input id="optSyl" class="switch" type="checkbox"></label>
-    <label class="opt" for="optLines"><span>Schreiblinien<small>Linien wie im Schulheft</small></span><input id="optLines" class="switch" type="checkbox"></label>
     <label class="opt" for="optAnim"><span>Buchstaben nacheinander<small>Wörter bauen sich langsam auf</small></span><input id="optAnim" class="switch" type="checkbox"></label>
     <label class="opt" for="optPunct"><span>Satzzeichen automatisch<small>Punkt oder Fragezeichen ab 3 Wörtern</small></span><input id="optPunct" class="switch" type="checkbox"></label>
     <button id="printBtn" class="print" type="button">
@@ -262,7 +269,8 @@
   var spellBtn = $("spellBtn"), profiBtn = $("profiBtn"), gearBtn = $("gearBtn");
   var scrim = $("scrim"), closeBtn = $("closeBtn"), printBtn = $("printBtn"), sheet = $("sheet");
   var cover = $("cover"), revealBtn = $("revealBtn"), timerBar = $("timer");
-  var optEls = { syl: $("optSyl"), lines: $("optLines"), anim: $("optAnim"), punct: $("optPunct") };
+  var optEls = { anim: $("optAnim"), punct: $("optPunct") };
+  var sylBtn = $("sylBtn"), linesBtn = $("linesBtn");
 
   var MIC_SVG = micBtn.innerHTML;
   var STOP_SVG = '<svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="currentColor"/></svg>';
@@ -503,8 +511,12 @@
     });
 
     textEl.replaceChildren(frag);
-    textEl.classList.toggle("syl", opt.syl);
-    textEl.classList.toggle("lined", opt.lines && all.length > 0);
+    // Silbenfarben und Schreiblinien gibt es nur im Profi-Modus
+    textEl.classList.toggle("syl", profi && opt.syl);
+    textEl.classList.toggle("lined", profi && opt.lines && all.length > 0);
+    sylBtn.hidden = linesBtn.hidden = !profi;
+    sylBtn.setAttribute("aria-pressed", String(opt.syl));
+    linesBtn.setAttribute("aria-pressed", String(opt.lines));
     hintText.textContent = profi ? "Profi: Sag ein Wort und merk es dir gut!" : "Drück auf das rote Mikrofon und sag ein Wort.";
     hint.hidden = all.length > 0 || listening;
     cover.hidden = !(profi && phase === "hidden");
@@ -623,6 +635,7 @@
     if(listening) return;
     profi = !profi;
     profiBtn.setAttribute("aria-pressed", String(profi));
+    animFrom = -1;
     newRound();
     render();
   });
@@ -791,6 +804,9 @@
       armTimer = setTimeout(function(){ clearBtn.classList.remove("armed"); }, 2500);
     }
   });
+
+  sylBtn.addEventListener("click", function(){ opt.syl = !opt.syl; animFrom = -1; save(); render(); });
+  linesBtn.addEventListener("click", function(){ opt.lines = !opt.lines; animFrom = -1; save(); render(); });
 
   /* ---------- Einstellungen ---------- */
   function openPanel(){
