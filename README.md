@@ -1,4 +1,3 @@
-[README.md](https://github.com/user-attachments/files/34084293/README.md)
 # Wortmaler
 
 Eine einfache Web-App fürs iPad, die Kinder (5–6 Jahre) zum Schreiben animiert. Gesprochene Wörter erscheinen live und riesig in kindgerechter Druckschrift.
@@ -7,12 +6,23 @@ Eine einfache Web-App fürs iPad, die Kinder (5–6 Jahre) zum Schreiben animier
 
 ## Funktionen
 
-- **Sprechen statt tippen:** Auf das rote Mikrofon tippen und ein Wort sagen. Es erscheint schon beim Sprechen (grau) und wird schwarz, sobald es erkannt ist. Nochmal tippen beendet die Aufnahme.
+- **Sprechen statt tippen:** Auf das rote Mikrofon tippen und ein Wort oder einen Satz sagen. Der Text erscheint schon beim Sprechen (grau). Nochmal tippen beendet die Aufnahme.
 - **Abc / ABC:** Umschalten zwischen normaler Schreibweise und Großbuchstaben. Ä, Ö, Ü bleiben erhalten, ß wird zum großen ẞ.
-- **Große Schrift:** Der Text füllt automatisch die ganze Fläche, ein einzelnes Wort fast den ganzen Bildschirm.
-- **Vorlesen:** Ein Wort antippen, und es wird vorgelesen.
-- **Löschen:** Pfeil unten links löscht das letzte Wort. Der Mülleimer oben löscht alles (zweimal tippen).
-- Die Wörter bleiben auf dem Gerät gespeichert, auch wenn die App geschlossen wird.
+- **Große Schrift:** Der Text füllt automatisch die ganze Fläche.
+- **Satzzeichen:** Ab drei Wörtern setzt die App automatisch einen Punkt oder, bei Fragen, ein Fragezeichen. Satzzeichen lassen sich auch ansagen: „Punkt“, „Komma“, „Fragezeichen“, „Ausrufezeichen“.
+- **Laute hören:** Einen Buchstaben antippen, und sein Laut wird vorgelesen, wie bei der Anlauttabelle. Buchstabengruppen wie „sch“, „ei“ oder „au“ werden zusammen gesprochen. Ein Tipp neben die Buchstaben liest das ganze Wort.
+- **Buchstabieren** (Lautsprecher-Knopf): Ein Wort antippen, und es wird Buchstabe für Buchstabe aufgesagt, der jeweilige Buchstabe leuchtet dabei auf. Danach wird das ganze Wort gesprochen.
+- **Profi-Modus** (Stern-Knopf): Wort sagen, ansehen und merken. Nach Ablauf des blauen Balkens wird es verdeckt, das Kind schreibt es auf Papier und deckt dann mit dem Augen-Knopf auf, um zu vergleichen.
+- **Löschen:** Pfeil unten links löscht das letzte Wort. Der Mülleimer löscht alles (zweimal tippen).
+- **Wortfilter:** Gängige Schimpfwörter werden als *** angezeigt und nicht vorgelesen.
+
+### Einstellungen (Zahnrad)
+
+- **Silbenfarben:** Silben abwechselnd blau und rot, wie bei der Silbenmethode.
+- **Schreiblinien:** Die Wörter stehen auf Linien wie im Schulheft.
+- **Buchstaben nacheinander:** Neue Wörter bauen sich Buchstabe für Buchstabe auf.
+- **Satzzeichen automatisch:** ein- und ausschaltbar.
+- **Arbeitsblatt drucken:** Alle gesammelten Wörter mit Schreiblinien und zwei leeren Zeilen zum Nachschreiben.
 
 Die Schrift ist [Andika](https://fonts.google.com/specimen/Andika), eine Druckschrift für Leseanfänger.
 
@@ -23,12 +33,20 @@ Die Schrift ist [Andika](https://fonts.google.com/specimen/Andika), eine Drucksc
 3. Über **Teilen → Zum Home-Bildschirm** als App-Symbol ablegen.
 4. Tipp: Mit dem **Geführten Zugriff** (Einstellungen → Bedienungshilfen) lässt sich das iPad auf diese App sperren.
 
+## Wortfilter erweitern
+
+In `index.html` nach `EIGENE_WOERTER` suchen und Wörter klein geschrieben (ß als ss) eintragen:
+
+```js
+var EIGENE_WOERTER = ["doofi", "bloedmann"];
+```
+
 ## Hinweise
 
 - Die Spracherkennung läuft über Safari bzw. Apple und braucht eine **Internetverbindung**.
 - Falls die Erkennung vom Home-Bildschirm-Symbol aus nicht startet, die Seite direkt in Safari öffnen.
-- Safari schreibt das erste Wort manchmal groß, auch wenn es kein Nomen ist.
-- Wenn der Browser keine Spracherkennung anbietet, öffnet die App stattdessen die Tastatur. Dort kann man die Diktierfunktion (Mikrofon auf der Tastatur) nutzen.
+- Die Laute werden von der Sprachausgabe des iPads nachgebildet und klingen nicht immer perfekt.
+- Silbentrennung und Satzzeichen folgen vereinfachten Regeln und liegen bei manchen Wörtern daneben.
 
 ## Technik
 
