@@ -44,7 +44,8 @@ var EIGENE_WOERTER = ["doofi", "bloedmann"];
 ## Hinweise
 
 - Die Spracherkennung läuft über Safari bzw. Apple und braucht eine **Internetverbindung**.
-- Falls die Erkennung vom Home-Bildschirm-Symbol aus nicht startet, die Seite direkt in Safari öffnen.
+- iPadOS erlaubt die Spracherkennung nur in Safari selbst, nicht in Web-Apps ohne Safari-Leiste. Das Home-Bildschirm-Symbol öffnet die App deshalb in Safari. Falls beim Hinzufügen „Als Web-App öffnen“ angeboten wird, diesen Schalter ausschalten.
+- Die Spracherkennung braucht die eingeschaltete **Diktierfunktion** (Einstellungen → Allgemein → Tastatur).
 - Silbentrennung und Satzzeichen folgen vereinfachten Regeln und liegen bei manchen Wörtern daneben.
 
 ## Technik

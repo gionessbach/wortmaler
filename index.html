@@ -3,8 +3,6 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Wortmaler">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#F4F7FB">
@@ -664,7 +662,14 @@
       render();
     };
     rec.onerror = function(e){
-      if(e.error === "not-allowed" || e.error === "service-not-allowed"){
+      var standalone = window.navigator.standalone === true ||
+        (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches);
+      if(standalone && (e.error === "not-allowed" || e.error === "service-not-allowed")){
+        // iPadOS erlaubt die Spracherkennung nicht in Web-Apps, die ohne Safari-Leiste laufen
+        toast("Die Spracherkennung geht nur in Safari. Bitte das Home-Bildschirm-Symbol löschen und neu hinzufügen, dabei „Als Web-App öffnen“ ausschalten.", 0);
+      }else if(e.error === "service-not-allowed"){
+        toast("Die Spracherkennung ist ausgeschaltet. Bitte in den iPad-Einstellungen unter Allgemein → Tastatur „Diktierfunktion“ einschalten.", 0);
+      }else if(e.error === "not-allowed"){
         toast("Das Mikrofon ist nicht erlaubt. Bitte in Safari unter „aA“ → Website-Einstellungen → Mikrofon auf „Erlauben“ stellen.", 0);
       }else if(e.error === "network"){
         toast("Keine Internetverbindung. Die Spracherkennung braucht Internet.", 5000);
