@@ -89,9 +89,7 @@
   }
 
   /* Untere Leiste */
-  .controls{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px}
-  .controls .left{justify-self:start}
-  .controls .right{justify-self:end}
+  .controls{display:flex;justify-content:center;align-items:center;gap:clamp(24px,5vw,48px)}
   .mic{
     position:relative;width:112px;height:112px;border-radius:50%;border:0;cursor:pointer;
     background:var(--mic);color:#fff;display:grid;place-items:center;
@@ -121,9 +119,6 @@
       <button id="modeNormal" type="button" aria-pressed="true">Abc</button>
       <button id="modeUpper" type="button" aria-pressed="false">ABC</button>
     </div>
-    <button id="clearBtn" class="round" type="button" aria-label="Alles löschen">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>
-    </button>
   </div>
 
   <main class="stage" id="stage">
@@ -137,13 +132,15 @@
   </main>
 
   <div class="controls">
-    <button id="undoBtn" class="round left" type="button" aria-label="Letztes Wort löschen">
+    <button id="undoBtn" class="round" type="button" aria-label="Letztes Wort löschen">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 5H9l-6 7 6 7h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1z"/><path d="M17 9l-5 6M12 9l5 6"/></svg>
     </button>
     <button id="micBtn" class="mic" type="button" aria-label="Sprechen">
       <svg id="micIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg>
     </button>
-    <span class="right"></span>
+    <button id="clearBtn" class="round" type="button" aria-label="Alles löschen">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>
+    </button>
   </div>
 </div>
 
@@ -186,6 +183,50 @@
   };
   var PUNCT_ONLY = /^[.,!?;:…]+$/;
 
+  /* ---------- Wortfilter (Jugendschutz) ----------
+     Gefilterte Wörter erscheinen als *** und werden nicht vorgelesen.
+     Eigene Wörter einfach in EIGENE_WOERTER eintragen, klein geschrieben, ß als ss.
+     Beispiel: var EIGENE_WOERTER = ["doofi", "bloedmann"];                        */
+  var EIGENE_WOERTER = [];
+
+  // Teil eines Wortes genügt (fängt auch zusammengesetzte Wörter ab)
+  var FILTER_ENTHAELT = [
+    "scheiss", "scheis", "fick", "fuck", "shit", "bitch", "wichs", "wixer", "wixx", "fotze",
+    "hure", "nutte", "schlampe", "arschloch", "missgeburt", "spast", "schwuchtel",
+    "kanake", "neger", "pimmel", "muschi", "titte", "piss", "kack",
+    "idiot", "trottel", "verpiss", "hackfresse", "miststueck", "miststuck", "drecksau", "bastard",
+    "porno", "kotze"
+  ];
+  // Wort beginnt damit (so bleiben z. B. "Marsch" und "Barsch" erlaubt)
+  var FILTER_BEGINNT = ["arsch", "depp", "kotz", "drecks", "blodmann", "bloedmann", "vollpfosten"];
+  // nur genau dieses Wort (so bleibt z. B. "fressen" erlaubt)
+  var FILTER_GENAU = ["fresse", "penner", "luder"];
+
+  var MASKE = "***";
+  function normalize(t){
+    return t.toLowerCase().replace(/ß/g, "ss").replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue")
+      .replace(/[^a-z*]/g, "");
+  }
+  function isBad(t){
+    var n = normalize(t);
+    if(!n) return false;
+    if(n.indexOf("*") >= 0) return true;               // schon von Apple maskiert, z. B. "f***"
+    var m = n.replace(/ae/g, "a").replace(/oe/g, "o").replace(/ue/g, "u"); // zweite Schreibweise ohne e
+    function hit(x){
+      if(FILTER_GENAU.indexOf(x) >= 0 || EIGENE_WOERTER.indexOf(x) >= 0) return true;
+      for(var i = 0; i < FILTER_BEGINNT.length; i++) if(x.indexOf(FILTER_BEGINNT[i]) === 0) return true;
+      for(var j = 0; j < FILTER_ENTHAELT.length; j++) if(x.indexOf(FILTER_ENTHAELT[j]) >= 0) return true;
+      for(var k = 0; k < EIGENE_WOERTER.length; k++) if(EIGENE_WOERTER[k] && x.indexOf(EIGENE_WOERTER[k]) >= 0) return true;
+      return false;
+    }
+    return hit(n) || hit(m);
+  }
+  function censor(t){
+    if(!isBad(t)) return t;
+    var tail = (t.match(/[.,!?;:…]+$/) || [""])[0];
+    return MASKE + tail;
+  }
+
   // Hängt neue Wörter (rohe Spracheingabe) an eine vorhandene Wortliste an.
   // Satzzeichen – gesprochen oder vom Erkenner geliefert – kleben am vorherigen Wort.
   function merge(base, str){
@@ -203,7 +244,7 @@
       }else if(PUNCT_ONLY.test(t)){
         if(out.length) out[out.length - 1] += t;
       }else{
-        out.push(t);
+        out.push(censor(t));
       }
     });
     return out;
@@ -359,6 +400,7 @@
   textEl.addEventListener("click", function(e){
     var s = e.target.closest(".w");
     if(!s || listening || !("speechSynthesis" in window)) return;
+    if(s.dataset.word.indexOf(MASKE) === 0) return;
     speechSynthesis.cancel();
     var u = new SpeechSynthesisUtterance(s.dataset.word);
     u.lang = "de-DE"; u.rate = 0.8;
