@@ -10,7 +10,7 @@ Eine einfache Web-App fürs iPad, die Kinder (5–6 Jahre) zum Schreiben animier
 - **Abc / ABC:** Umschalten zwischen normaler Schreibweise und Großbuchstaben. Ä, Ö, Ü bleiben erhalten, ß wird zum großen ẞ.
 - **Große Schrift:** Der Text füllt automatisch die ganze Fläche.
 - **Satzzeichen:** Ab drei Wörtern setzt die App automatisch einen Punkt oder, bei Fragen, ein Fragezeichen. Satzzeichen lassen sich auch ansagen: „Punkt“, „Komma“, „Fragezeichen“, „Ausrufezeichen“.
-- **Laute hören:** Einen Buchstaben antippen, und sein Laut wird vorgelesen, wie bei der Anlauttabelle. Buchstabengruppen wie „sch“, „ei“ oder „au“ werden zusammen gesprochen. Ein Tipp neben die Buchstaben liest das ganze Wort.
+- **Vorlesen:** Ein Wort antippen, und es wird vorgelesen.
 - **Buchstabieren** (Lautsprecher-Knopf): Ein Wort antippen, und es wird Buchstabe für Buchstabe aufgesagt, der jeweilige Buchstabe leuchtet dabei auf. Danach wird das ganze Wort gesprochen.
 - **Profi-Modus** (Stern-Knopf): Wort sagen, ansehen und merken. Nach Ablauf des blauen Balkens wird es verdeckt, das Kind schreibt es auf Papier und deckt dann mit dem Augen-Knopf auf, um zu vergleichen.
 - **Löschen:** Pfeil unten links löscht das letzte Wort. Der Mülleimer löscht alles (zweimal tippen).
@@ -45,7 +45,6 @@ var EIGENE_WOERTER = ["doofi", "bloedmann"];
 
 - Die Spracherkennung läuft über Safari bzw. Apple und braucht eine **Internetverbindung**.
 - Falls die Erkennung vom Home-Bildschirm-Symbol aus nicht startet, die Seite direkt in Safari öffnen.
-- Die Laute werden von der Sprachausgabe des iPads nachgebildet und klingen nicht immer perfekt.
 - Silbentrennung und Satzzeichen folgen vereinfachten Regeln und liegen bei manchen Wörtern daneben.
 
 ## Technik

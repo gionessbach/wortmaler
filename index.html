@@ -685,15 +685,7 @@
     if(listening) stop(); else start();
   });
 
-  /* ---------- Vorlesen: Laute, Buchstabieren, ganze Wörter ---------- */
-  var LAUTE = {
-    "a":"a", "e":"e", "i":"i", "o":"o", "u":"u", "ä":"ä", "ö":"ö", "ü":"ü", "y":"ü",
-    "b":"bö", "c":"kö", "d":"dö", "f":"fff", "g":"gö", "h":"hö", "j":"jö", "k":"kö", "l":"lll",
-    "m":"mmm", "n":"nnn", "p":"pö", "q":"kwö", "r":"rrr", "s":"sss", "t":"tö", "v":"fff",
-    "w":"wö", "x":"ks", "z":"ts", "ß":"sss",
-    "sch":"schhh", "ch":"ch", "ck":"kö", "ei":"ei", "ai":"ei", "au":"au", "eu":"eu", "äu":"eu", "ie":"ii", "qu":"kwö", "pf":"pf"
-  };
-  var LAUTGRUPPEN = ["sch","äu","ch","ck","ei","ai","au","eu","ie","qu","pf"];
+  /* ---------- Vorlesen: Buchstabieren und ganze Wörter ---------- */
   var NAMEN = {
     "a":"A", "b":"Be", "c":"Ze", "d":"De", "e":"E", "f":"Eff", "g":"Ge", "h":"Ha", "i":"I", "j":"Jott",
     "k":"Ka", "l":"El", "m":"Em", "n":"En", "o":"O", "p":"Pe", "q":"Ku", "r":"Er", "s":"Es", "t":"Te",
@@ -747,20 +739,6 @@
     items.push({ text: w.dataset.word.replace(PUNCT_END, ""), els: [w], cls: "speaking", rate: 0.8 });
     speakSeq(items);
   }
-  function sayLaut(w, l){
-    var ls = letterEls(w);
-    var s = ls.map(function(n){ return n.textContent.toLowerCase(); }).join("");
-    var i = ls.indexOf(l), from = i, len = 1;
-    for(var g = 0; g < LAUTGRUPPEN.length; g++){
-      var grp = LAUTGRUPPEN[g], found = false;
-      for(var st = Math.max(0, i - grp.length + 1); st <= i; st++){
-        if(s.substr(st, grp.length) === grp){ from = st; len = grp.length; found = true; break; }
-      }
-      if(found) break;
-    }
-    var key = s.substr(from, len);
-    speakSeq([{ text: LAUTE[key] || key, els: ls.slice(from, from + len), cls: "hl", rate: 0.7 }]);
-  }
   // Alle sichtbaren Wörter nacheinander vorlesen (nach dem Aufdecken im Profi-Modus)
   function speakWords(){
     var ws = Array.prototype.filter.call(textEl.querySelectorAll(".w"), function(w){ return !w.classList.contains("masked"); });
@@ -771,9 +749,7 @@
     if(listening) return;
     var w = e.target.closest(".w");
     if(!w || w.classList.contains("live") || w.classList.contains("masked")) return;
-    if(spell){ spellWord(w); return; }
-    var l = e.target.closest(".l");
-    if(l && !l.classList.contains("p")) sayLaut(w, l); else sayWord(w);
+    if(spell) spellWord(w); else sayWord(w);
   });
 
   /* ---------- Knöpfe ---------- */
@@ -790,7 +766,7 @@
   spellBtn.addEventListener("click", function(){
     spell = !spell;
     spellBtn.setAttribute("aria-pressed", String(spell));
-    toast(spell ? "Tippe auf ein Wort: Es wird buchstabiert." : "Tippe auf einen Buchstaben: Du hörst seinen Laut.", 2500);
+    toast(spell ? "Tippe auf ein Wort: Es wird buchstabiert." : "Tippe auf ein Wort: Es wird vorgelesen.", 2500);
     save();
   });
 
