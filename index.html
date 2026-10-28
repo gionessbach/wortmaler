@@ -28,6 +28,7 @@
     color-scheme:light;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  [hidden]{display:none!important}
   html,body{height:100%;margin:0}
   body{
     background:var(--paper);color:var(--ink);font-family:var(--font-ui);
@@ -178,11 +179,34 @@
   }
 
   /* ---------- Text aufbereiten ---------- */
-  function cleanWords(str){
-    return str
-      .replace(/[.,!?;:"„“”«»()]/g, " ")
+  // Gesprochene Satzzeichen: "Hallo Punkt" → "Hallo."
+  var SPOKEN = {
+    "punkt": ".", "komma": ",", "fragezeichen": "?", "ausrufezeichen": "!",
+    "doppelpunkt": ":", "semikolon": ";", "strichpunkt": ";"
+  };
+  var PUNCT_ONLY = /^[.,!?;:…]+$/;
+
+  // Hängt neue Wörter (rohe Spracheingabe) an eine vorhandene Wortliste an.
+  // Satzzeichen – gesprochen oder vom Erkenner geliefert – kleben am vorherigen Wort.
+  function merge(base, str){
+    var out = base.slice();
+    var tokens = str
+      .replace(/["„“”«»()]/g, " ")
+      .replace(/([.,!?;:…])(?=\S)/g, "$1 ")
       .split(/\s+/)
-      .filter(function(w){ return w.length > 0; });
+      .filter(function(t){ return t.length > 0; });
+    tokens.forEach(function(t){
+      var key = t.toLowerCase().replace(/[.,!?;:…]+$/, "");
+      var mark = SPOKEN[key];
+      if(mark !== undefined && out.length){
+        out[out.length - 1] = out[out.length - 1].replace(/[.,!?;:…]+$/, "") + mark;
+      }else if(PUNCT_ONLY.test(t)){
+        if(out.length) out[out.length - 1] += t;
+      }else{
+        out.push(t);
+      }
+    });
+    return out;
   }
   function show(w){
     if(!upper) return w;
@@ -192,9 +216,8 @@
 
   /* ---------- Darstellung ---------- */
   function render(){
-    var liveWords = cleanWords(live);
     var frag = document.createDocumentFragment();
-    var all = words.concat(liveWords);
+    var all = merge(words, live);
     all.forEach(function(w, i){
       var s = document.createElement("span");
       s.className = "w" + (i >= words.length ? " live" : "");
@@ -242,9 +265,8 @@
   }
 
   function commit(){
-    var nw = cleanWords(live);
+    if(live.trim()){ words = merge(words, live); save(); }
     live = "";
-    if(nw.length){ words = words.concat(nw); save(); }
     render();
   }
 
