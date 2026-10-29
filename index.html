@@ -152,6 +152,33 @@
   .switch:checked::after{transform:translateX(22px)}
   .print{margin-top:18px;height:54px;border-radius:14px;border:0;background:var(--ink);color:#fff;font-size:18px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px}
   .print svg{width:24px;height:24px}
+  .linkbtn{margin-top:12px;height:44px;border:0;background:none;color:var(--syl-a);font-size:16px;font-weight:600;cursor:pointer}
+
+  /* Code-Eingabe für den Elternbereich */
+  .pinscrim{
+    position:fixed;inset:0;z-index:20;background:rgba(29,39,66,.45);display:flex;align-items:center;justify-content:center;
+    padding:max(16px, env(safe-area-inset-top,0px)) max(16px, env(safe-area-inset-right,0px)) max(16px, env(safe-area-inset-bottom,0px)) max(16px, env(safe-area-inset-left,0px));
+  }
+  .pinbox{
+    width:min(360px,100%);background:var(--sheet);border-radius:26px;padding:24px 24px 20px;
+    box-shadow:0 16px 48px rgba(29,39,66,.3);display:flex;flex-direction:column;align-items:center;gap:14px;
+  }
+  .pinbox h2{margin:0;font-size:21px;font-weight:700;text-align:center}
+  .pinbox p{margin:0;color:#6B7690;font-size:15px;line-height:1.4;text-align:center;min-height:2.8em}
+  .pinbox p.err{color:var(--mic-on)}
+  .dots{display:flex;gap:18px;margin:4px 0 6px}
+  .dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--ink);transition:background .15s}
+  .dot.on{background:var(--ink)}
+  .dots.shake{animation:shake .4s}
+  @keyframes shake{20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
+  .keys{display:grid;grid-template-columns:repeat(3,72px);gap:12px}
+  .keys button{
+    width:72px;height:72px;border-radius:50%;border:2px solid var(--line);background:var(--paper);color:var(--ink);
+    font-size:28px;font-weight:600;cursor:pointer;font-variant-numeric:tabular-nums;
+  }
+  .keys button:active{background:var(--line)}
+  .keys button.plain{border-color:transparent;background:none;font-size:16px}
+  .keys button:disabled{opacity:.35}
 
   @media (prefers-reduced-motion:reduce){
     .mic.on::before,.mic.on::after{animation:none;opacity:.5;transform:scale(1.2)}
@@ -175,7 +202,7 @@
   @media print{
     @page{size:A4;margin:15mm}
     html,body{height:auto;overflow:visible;background:#fff}
-    .app,.scrim{display:none!important}
+    .app,.scrim,.pinscrim{display:none!important}
     #sheet{display:block;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   }
 </style>
@@ -201,7 +228,7 @@
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z"/></svg>
         Profi
       </button>
-      <button id="gearBtn" class="round" type="button" aria-label="Einstellungen">
+      <button id="gearBtn" class="round" type="button" aria-label="Elternbereich">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
       </button>
     </div>
@@ -241,15 +268,31 @@
 <div class="scrim" id="scrim" hidden>
   <div class="panel" role="dialog" aria-modal="true" aria-labelledby="panelTitle">
     <div class="panel-head">
-      <h2 id="panelTitle">Einstellungen</h2>
+      <h2 id="panelTitle">Elternbereich</h2>
       <button id="closeBtn" class="x" type="button" aria-label="Schließen">✕</button>
     </div>
+    <label class="opt" for="optAudio"><span>Vorlesen<small>Wörter antippen und anhören, Buchstabieren</small></span><input id="optAudio" class="switch" type="checkbox"></label>
     <label class="opt" for="optAnim"><span>Buchstaben nacheinander<small>Wörter bauen sich langsam auf</small></span><input id="optAnim" class="switch" type="checkbox"></label>
     <label class="opt" for="optPunct"><span>Satzzeichen automatisch<small>Punkt oder Fragezeichen ab 3 Wörtern</small></span><input id="optPunct" class="switch" type="checkbox"></label>
     <button id="printBtn" class="print" type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="7"/></svg>
       Arbeitsblatt drucken
     </button>
+    <button id="changePinBtn" class="linkbtn" type="button">Code ändern</button>
+  </div>
+</div>
+
+<div class="pinscrim" id="pinScrim" hidden>
+  <div class="pinbox" role="dialog" aria-modal="true" aria-labelledby="pinTitle">
+    <h2 id="pinTitle">Elternbereich</h2>
+    <p id="pinText">Bitte den Code eingeben.</p>
+    <div class="dots" id="pinDots" aria-hidden="true"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+    <div class="keys" id="pinKeys">
+      <button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button>
+      <button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button>
+      <button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button>
+      <button type="button" class="plain" data-k="cancel" id="pinCancel">Abbrechen</button><button type="button" data-k="0">0</button><button type="button" class="plain" data-k="del" aria-label="Löschen">⌫</button>
+    </div>
   </div>
 </div>
 
@@ -267,7 +310,7 @@
   var spellBtn = $("spellBtn"), profiBtn = $("profiBtn"), gearBtn = $("gearBtn");
   var scrim = $("scrim"), closeBtn = $("closeBtn"), printBtn = $("printBtn"), sheet = $("sheet");
   var cover = $("cover"), revealBtn = $("revealBtn"), timerBar = $("timer");
-  var optEls = { anim: $("optAnim"), punct: $("optPunct") };
+  var optEls = { audio: $("optAudio"), anim: $("optAnim"), punct: $("optPunct") };
   var sylBtn = $("sylBtn"), linesBtn = $("linesBtn");
 
   var MIC_SVG = micBtn.innerHTML;
@@ -277,7 +320,7 @@
   var live = "";           // gerade erkannter Text
   var upper = false;
   var spell = false;       // Buchstabier-Modus
-  var opt = { syl: true, lines: true, anim: true, punct: true };
+  var opt = { syl: true, lines: true, anim: true, punct: true, audio: true };
   var listening = false, rec = null;
 
   var profi = false, profiStart = 0, phase = "idle", phaseTimer = null;
@@ -730,7 +773,7 @@
   }
   // items: [{text, els, cls, rate}]
   function speakSeq(items){
-    if(!("speechSynthesis" in window) || !items.length) return;
+    if(!opt.audio || !("speechSynthesis" in window) || !items.length) return;
     stopSpeaking();
     setTimeout(function(){
       items.forEach(function(it){
@@ -764,7 +807,7 @@
   }
 
   textEl.addEventListener("click", function(e){
-    if(listening) return;
+    if(listening || !opt.audio) return;
     var w = e.target.closest(".w");
     if(!w || w.classList.contains("live") || w.classList.contains("masked")) return;
     if(spell) spellWord(w); else sayWord(w);
@@ -813,18 +856,100 @@
   sylBtn.addEventListener("click", function(){ opt.syl = !opt.syl; animFrom = -1; save(); render(); });
   linesBtn.addEventListener("click", function(){ opt.lines = !opt.lines; animFrom = -1; save(); render(); });
 
+  // Vorlesen aus: Buchstabier-Knopf ausblenden
+  function applyAudio(){
+    spellBtn.hidden = !opt.audio;
+    if(!opt.audio) stopSpeaking();
+  }
+
+  /* ---------- Elternbereich mit Code ---------- */
+  var PIN_KEY = "wortmaler-code";
+  var pinScrim = $("pinScrim"), pinTitle = $("pinTitle"), pinText = $("pinText"), pinDots = $("pinDots");
+  var pinKeys = $("pinKeys"), pinCancel = $("pinCancel"), changePinBtn = $("changePinBtn");
+  var pinMode = "check", pinEntry = "", pinFirst = "", pinFails = 0, pinLockUntil = 0, pinLockTimer = null;
+
+  function getPin(){ try{ return localStorage.getItem(PIN_KEY); }catch(e){ return null; } }
+  function setPin(p){ try{ localStorage.setItem(PIN_KEY, p); return true; }catch(e){ return false; } }
+
+  function pinShow(mode){
+    pinMode = mode; pinEntry = ""; pinFirst = "";
+    var first = mode === "setInitial";
+    pinTitle.textContent = first ? "Willkommen!" : mode === "check" ? "Elternbereich" : "Neuer Code";
+    pinMsg(first ? "Lege einen vierstelligen Code für den Elternbereich fest." :
+           mode === "check" ? "Bitte den Code eingeben." : "Bitte einen neuen vierstelligen Code eingeben.");
+    pinCancel.hidden = first;
+    pinDraw(); pinLockCheck();
+    pinScrim.hidden = false;
+  }
+  function pinHide(){ pinScrim.hidden = true; pinEntry = ""; }
+  function pinMsg(t, err){ pinText.textContent = t; pinText.classList.toggle("err", !!err); }
+  function pinDraw(){
+    Array.prototype.forEach.call(pinDots.children, function(d, i){ d.classList.toggle("on", i < pinEntry.length); });
+  }
+  function pinShake(){
+    pinDots.classList.remove("shake"); void pinDots.offsetWidth; pinDots.classList.add("shake");
+  }
+  function pinLockCheck(){
+    var left = Math.ceil((pinLockUntil - Date.now()) / 1000);
+    var locked = pinMode === "check" && left > 0;
+    Array.prototype.forEach.call(pinKeys.querySelectorAll("button"), function(b){
+      if(b.dataset.k !== "cancel") b.disabled = locked;
+    });
+    clearTimeout(pinLockTimer);
+    if(locked){
+      pinMsg("Zu oft falsch. Bitte " + left + " Sekunden warten.", true);
+      pinLockTimer = setTimeout(pinLockCheck, 1000);
+    }else if(pinMode === "check" && pinFails >= 3){
+      pinFails = 0; pinMsg("Bitte den Code eingeben.");
+    }
+  }
+  function pinDone(){
+    var code = pinEntry; pinEntry = "";
+    if(pinMode === "check"){
+      if(code === getPin()){ pinFails = 0; pinHide(); openPanel(); return; }
+      pinFails++; pinShake();
+      if(pinFails >= 3){ pinLockUntil = Date.now() + 30000; pinLockCheck(); }
+      else pinMsg("Der Code stimmt nicht. Bitte nochmal versuchen.", true);
+    }else if(!pinFirst){
+      pinFirst = code;
+      pinMsg("Bitte den Code zur Bestätigung noch einmal eingeben.");
+    }else if(code === pinFirst){
+      var initial = pinMode === "setInitial";
+      setPin(code); pinHide();
+      if(initial) toast("Code gespeichert. Der Elternbereich ist hinter dem Zahnrad.", 4000);
+      else{ openPanel(); toast("Neuer Code gespeichert.", 2500); }
+    }else{
+      pinFirst = ""; pinShake();
+      pinMsg("Die Codes waren nicht gleich. Bitte einen Code neu eingeben.", true);
+    }
+    setTimeout(pinDraw, 250);
+  }
+  pinKeys.addEventListener("click", function(e){
+    var b = e.target.closest("button"); if(!b || b.disabled) return;
+    var k = b.dataset.k;
+    if(k === "cancel"){ pinHide(); if(pinMode === "change") openPanel(); return; }
+    if(k === "del"){ pinEntry = pinEntry.slice(0, -1); pinDraw(); return; }
+    if(pinEntry.length >= 4) return;
+    pinEntry += k; pinDraw();
+    if(pinEntry.length === 4) setTimeout(pinDone, 150);
+  });
+
   /* ---------- Einstellungen ---------- */
   function openPanel(){
     for(var k in optEls) optEls[k].checked = opt[k];
     scrim.hidden = false;
   }
   function closePanel(){ scrim.hidden = true; }
-  gearBtn.addEventListener("click", openPanel);
+  gearBtn.addEventListener("click", function(){
+    if(listening) return;
+    pinShow(getPin() ? "check" : "setInitial");
+  });
+  changePinBtn.addEventListener("click", function(){ closePanel(); pinShow("change"); });
   closeBtn.addEventListener("click", closePanel);
   scrim.addEventListener("click", function(e){ if(e.target === scrim) closePanel(); });
   Object.keys(optEls).forEach(function(k){
     optEls[k].addEventListener("change", function(){
-      opt[k] = optEls[k].checked; animFrom = -1; save(); render();
+      opt[k] = optEls[k].checked; animFrom = -1; applyAudio(); save(); render();
     });
   });
 
@@ -905,7 +1030,9 @@
 
   load();
   spellBtn.setAttribute("aria-pressed", String(spell));
+  applyAudio();
   setUpper(upper);
+  if(!getPin()) pinShow("setInitial");   // beim allerersten Start den Code festlegen
 
   // für Tests
   window.__wm = { merge: merge, autoPunct: autoPunct, syllableClasses: syllableClasses, isBad: isBad };

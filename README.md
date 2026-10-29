@@ -10,7 +10,7 @@ Eine einfache Web-App fürs iPad, die Kinder (5–6 Jahre) zum Schreiben animier
 - **Abc / ABC:** Umschalten zwischen normaler Schreibweise und Großbuchstaben. Ä, Ö, Ü bleiben erhalten, ß wird zum großen ẞ.
 - **Große Schrift:** Der Text füllt automatisch die ganze Fläche.
 - **Satzzeichen:** Ab drei Wörtern setzt die App automatisch einen Punkt oder, bei Fragen, ein Fragezeichen. Satzzeichen lassen sich auch ansagen: „Punkt“, „Komma“, „Fragezeichen“, „Ausrufezeichen“.
-- **Vorlesen:** Ein Wort antippen, und es wird vorgelesen.
+- **Vorlesen:** Ein Wort antippen, und es wird vorgelesen (im Elternbereich abschaltbar).
 - **Buchstabieren** (Lautsprecher-Knopf): Ein Wort antippen, und es wird Buchstabe für Buchstabe aufgesagt, der jeweilige Buchstabe leuchtet dabei auf. Danach wird das ganze Wort gesprochen.
 - **Profi-Modus** (Stern-Knopf): Wort sagen, ansehen und merken. Nach Ablauf des blauen Balkens wird es verdeckt, das Kind schreibt es auf Papier und deckt dann mit dem Augen-Knopf auf, um zu vergleichen. Im Profi-Modus erscheinen zwei zusätzliche Knöpfe:
   - **Silbenfarben** (Silbenbögen): Silben abwechselnd blau und rot, wie bei der Silbenmethode.
@@ -18,11 +18,17 @@ Eine einfache Web-App fürs iPad, die Kinder (5–6 Jahre) zum Schreiben animier
 - **Löschen:** Pfeil unten links löscht das letzte Wort. Der Mülleimer löscht alles (zweimal tippen).
 - **Wortfilter:** Gängige Schimpfwörter werden als *** angezeigt und nicht vorgelesen.
 
-### Einstellungen (Zahnrad)
+### Elternbereich (Zahnrad)
 
+Der Elternbereich ist mit einem vierstelligen Code geschützt. Beim allerersten Start der App wird der Code festgelegt (zweimal eingeben). Nach drei falschen Versuchen ist die Eingabe 30 Sekunden gesperrt.
+
+- **Vorlesen:** Schaltet das Vorlesen von Wörtern und den Buchstabier-Knopf an oder aus.
 - **Buchstaben nacheinander:** Neue Wörter bauen sich Buchstabe für Buchstabe auf.
 - **Satzzeichen automatisch:** ein- und ausschaltbar.
 - **Arbeitsblatt drucken:** Alle gesammelten Wörter mit Schreiblinien und zwei leeren Zeilen zum Nachschreiben.
+- **Code ändern:** Neuen Code festlegen.
+
+**Code vergessen?** In den iPad-Einstellungen unter Apps → Safari → Erweitert → Website-Daten den Eintrag „github.io“ löschen. Danach fragt die App beim nächsten Start nach einem neuen Code. Dabei gehen auch die gespeicherten Wörter und Einstellungen verloren.
 
 Die Schrift ist [Andika](https://fonts.google.com/specimen/Andika), eine Druckschrift für Leseanfänger.
 
@@ -46,6 +52,7 @@ var EIGENE_WOERTER = ["doofi", "bloedmann"];
 - Die Spracherkennung läuft über Safari bzw. Apple und braucht eine **Internetverbindung**.
 - iPadOS erlaubt die Spracherkennung nur in Safari selbst, nicht in Web-Apps ohne Safari-Leiste. Das Home-Bildschirm-Symbol öffnet die App deshalb in Safari. Falls beim Hinzufügen „Als Web-App öffnen“ angeboten wird, diesen Schalter ausschalten.
 - Die Spracherkennung braucht die eingeschaltete **Diktierfunktion** (Einstellungen → Allgemein → Tastatur).
+- Der Code ist eine Kindersicherung, kein Passwortschutz. Er wird nur auf dem iPad gespeichert.
 - Silbentrennung und Satzzeichen folgen vereinfachten Regeln und liegen bei manchen Wörtern daneben.
 
 ## Technik
