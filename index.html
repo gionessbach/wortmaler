@@ -9,10 +9,13 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="favicon.png">
 <title>Wortmaler</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.webmanifest">
 <style>
+  /* Schrift Andika liegt im Ordner vendor/andika – so funktioniert mRead auch ohne Internet */
+  @font-face{font-family:"Andika";font-style:normal;font-weight:400;font-display:swap;src:url(vendor/andika/andika-latin-400-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+  @font-face{font-family:"Andika";font-style:normal;font-weight:400;font-display:swap;src:url(vendor/andika/andika-latin-ext-400-normal.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+  @font-face{font-family:"Andika";font-style:normal;font-weight:700;font-display:swap;src:url(vendor/andika/andika-latin-700-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+  @font-face{font-family:"Andika";font-style:normal;font-weight:700;font-display:swap;src:url(vendor/andika/andika-latin-ext-700-normal.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
   /* Layout: ein Bildschirm – oben Umschalter und Modi, riesige Schreibfläche, unten Löschen · Mikrofon · Alles löschen */
   :root{
     --paper:#F4F7FB;      /* Hintergrund */
@@ -39,7 +42,7 @@
     touch-action:manipulation;overflow:hidden;
   }
   .app{
-    height:100%;display:grid;grid-template-rows:auto 1fr auto;gap:16px;
+    height:100%;height:100dvh;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto 1fr auto;gap:16px;
     padding-top:max(16px, env(safe-area-inset-top,0px));
     padding-bottom:max(16px, env(safe-area-inset-bottom,0px));
     padding-left:max(16px, env(safe-area-inset-left,0px));
@@ -138,7 +141,7 @@
     padding-bottom:16px;
   }
   .panel{
-    width:min(380px,100%);background:var(--sheet);border-radius:22px;padding:20px 22px;
+    width:min(380px,100%);max-height:100%;overflow-y:auto;background:var(--sheet);border-radius:22px;padding:20px 22px;
     box-shadow:0 16px 48px rgba(29,39,66,.22);display:flex;flex-direction:column;
   }
   .panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
@@ -153,6 +156,24 @@
   .print{margin-top:18px;height:54px;border-radius:14px;border:0;background:var(--ink);color:#fff;font-size:18px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px}
   .print svg{width:24px;height:24px}
   .linkbtn{margin-top:12px;height:44px;border:0;background:none;color:var(--syl-a);font-size:16px;font-weight:600;cursor:pointer}
+
+  /* Stimme und Tempo */
+  .sec{margin:16px 0 6px;font-size:13px;font-weight:700;color:#6B7690;text-transform:uppercase;letter-spacing:.05em}
+  .phint{margin:0 0 8px;color:#6B7690;font-size:14px;line-height:1.4}
+  .voices{display:flex;flex-direction:column;gap:8px}
+  .voice{display:flex;align-items:center;gap:10px;width:100%;min-height:52px;padding:8px 14px;text-align:left;cursor:pointer;
+    border:2px solid var(--line);border-radius:14px;background:var(--sheet);color:var(--ink);font-size:17px}
+  .voice[aria-checked="true"]{border-color:var(--ink);background:#EEF3FB}
+  .voice .nm{flex:1;min-width:0}
+  .voice .prog{font-size:13px;color:#6B7690;font-weight:600}
+  .voice .tag{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:#FFD23F;border-radius:999px;padding:3px 8px}
+  .voice .tag.ki{background:var(--ink);color:#FFD23F}
+  .voice svg{width:22px;height:22px;flex:none}
+  .speeds{display:flex;gap:8px}
+  .speeds button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;border:2px solid var(--line);border-radius:14px;
+    background:var(--sheet);color:var(--ink);font-size:15px;font-weight:600;cursor:pointer}
+  .speeds button[aria-pressed="true"]{border-color:var(--ink);background:#EEF3FB}
+  .speeds svg{width:38px;height:38px}
 
   /* Code-Eingabe für den Elternbereich */
   .pinscrim{
@@ -183,6 +204,25 @@
   @media (prefers-reduced-motion:reduce){
     .mic.on::before,.mic.on::after{animation:none;opacity:.5;transform:scale(1.2)}
     .l.ap{animation-duration:.01s}
+  }
+
+  /* Handy (z. B. Android): alles kompakter */
+  @media (max-width:600px){
+    .app{gap:10px;
+      padding-top:max(10px, env(safe-area-inset-top,0px)); padding-bottom:max(10px, env(safe-area-inset-bottom,0px));
+      padding-left:max(10px, env(safe-area-inset-left,0px)); padding-right:max(10px, env(safe-area-inset-right,0px))}
+    .bar{gap:8px} .group{gap:6px;flex-wrap:wrap;justify-content:flex-end}
+    .toggle{padding:3px;gap:3px}
+    .toggle button{min-width:52px;height:40px;font-size:21px;padding:0 10px}
+    .round,.pill{height:44px} .round{width:44px}
+    .pill{padding:0 12px 0 10px;font-size:18px;gap:5px}
+    .round svg,.pill svg{width:22px;height:22px}
+    .stage{border-radius:20px}
+    .controls{gap:28px}
+    .mic{width:84px;height:84px;box-shadow:0 4px 0 #C2462A} .mic svg{width:40px;height:40px}
+    .mic.on{box-shadow:0 4px 0 #9E2A12}
+    .hint{font-size:17px} .hint svg{width:90px;height:90px}
+    .reveal{width:100px;height:100px} .reveal svg{width:46px;height:46px}
   }
 
   /* Ersatz-Eingabe, falls der Browser keine Spracherkennung hat */
@@ -272,7 +312,16 @@
       <button id="closeBtn" class="x" type="button" aria-label="Schließen">✕</button>
     </div>
     <label class="opt" for="optAudio"><span>Vorlesen<small>Wörter antippen und anhören, Buchstabieren</small></span><input id="optAudio" class="switch" type="checkbox"></label>
-    <label class="opt" for="optAnim"><span>Buchstaben nacheinander<small>Wörter bauen sich langsam auf</small></span><input id="optAnim" class="switch" type="checkbox"></label>
+    <div class="sec">Stimme</div>
+    <p class="phint">KI-Stimmen klingen natürlich und funktionieren ohne Internet. Beim ersten Antippen wird die Stimme einmalig geladen (ca. 90 MB, am besten im WLAN). Wurde sie schon in mRead geladen, ist sie sofort da.</p>
+    <div class="voices" id="kiVoices" role="radiogroup" aria-label="KI-Stimmen"></div>
+    <div class="sec" id="devVoicesTitle">Stimmen des iPads</div>
+    <div class="voices" id="voices" role="radiogroup" aria-label="Stimmen des Geräts"></div>
+    <div class="sec">Tempo beim Vorlesen</div>
+    <div class="speeds" id="speeds" role="group" aria-label="Tempo">
+      <button type="button" data-speed="slow"></button><button type="button" data-speed="normal"></button><button type="button" data-speed="fast"></button>
+    </div>
+    <label class="opt" for="optAnim" style="margin-top:8px"><span>Buchstaben nacheinander<small>Wörter bauen sich langsam auf</small></span><input id="optAnim" class="switch" type="checkbox"></label>
     <label class="opt" for="optPunct"><span>Satzzeichen automatisch<small>Punkt oder Fragezeichen ab 3 Wörtern</small></span><input id="optPunct" class="switch" type="checkbox"></label>
     <button id="printBtn" class="print" type="button">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="7"/></svg>
@@ -322,13 +371,21 @@
   var spell = false;       // Buchstabier-Modus
   var opt = { syl: true, lines: true, anim: true, punct: true, audio: true };
   var listening = false, rec = null;
+  var voiceURI = null;     // gewählte Stimme ("piper:kerstin" = KI-Stimme; leer = automatisch die beste)
+  var speed = "normal";    // Vorlese-Tempo: slow (Schildkröte), normal (Igel), fast (Hase)
+  var ICON_SLOW = '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21c0-6 4.5-10 10-10s10 4 10 10z" fill="#FDD002"/><path d="M9 21l-1 4M21 21l1 4M25 19c2 0 3.5-1.5 3.5-3.5S27 13 25.5 13"/><path d="M11 15.5l4 3 4-3"/></svg>';
+  var ICON_NORMAL = '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 23c0-6 4.5-10 10.5-10 3.5 0 6.5 1.8 8.3 4.6L28 20.5l-3.6 1.8c-.8.5-1.8.7-2.8.7H5z" fill="#FDD002"/><path d="M6.5 18.5L5 15l3.8 1.2L8.5 12l3.4 2.6L13 10l2.1 3.6L18 10.5l.6 3.7 3-1.9"/><circle cx="23.3" cy="18.6" r=".9" fill="currentColor"/><path d="M9 23v2.5M19 23v2.5"/></svg>';
+  var ICON_FAST = '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21c1-4.5 4.5-7 9-7 2.2 0 3.6.5 4.8 1.4L26 14l1.8 2.4c.7 1 .3 2.3-.8 2.6l-3 .9c-1.3 2.4-4 3.6-7.5 3.6H11c-1.3 0-2.2-1-2-2.5z" fill="#FDD002"/><path d="M22.8 15.4c1.5-3.4 4.4-6.4 6-6 1.2.3-.9 4.1-4 6.8M21 14.6c.6-3.6 2.7-7.3 4.3-7.2 1.2.1 0 4-2.2 7"/><circle cx="25.4" cy="17.3" r=".8" fill="currentColor"/><path d="M11 23.5l-4 2.5M19 23.5l4.5 2.5M9.5 18.5c-1.5-.3-2.5.5-2.6 1.6"/><path d="M2 12h5M1 16h4M3 20h3" stroke-width="1.6"/></svg>';
+
+  /* ---------- Gerät: iPad oder Android ---------- */
+  var ANDROID = /Android/i.test(navigator.userAgent);
 
   var profi = false, profiStart = 0, phase = "idle", phaseTimer = null;
   var animFrom = -1, animStart = 0, ANIM_STEP = 140;
 
   /* ---------- Speichern (nur auf diesem Gerät) ---------- */
   function save(){
-    try{ localStorage.setItem("wortmaler", JSON.stringify({words:words, upper:upper, spell:spell, opt:opt})); }catch(e){}
+    try{ localStorage.setItem("wortmaler", JSON.stringify({words:words, upper:upper, spell:spell, opt:opt, voiceURI:voiceURI, speed:speed})); }catch(e){}
   }
   function load(){
     try{
@@ -337,6 +394,8 @@
       if(Array.isArray(d.words)) words = d.words.filter(function(w){ return typeof w === "string"; });
       upper = !!d.upper; spell = !!d.spell;
       if(d.opt) for(var k in opt) if(typeof d.opt[k] === "boolean") opt[k] = d.opt[k];
+      if(typeof d.voiceURI === "string") voiceURI = d.voiceURI;
+      if(d.speed === "slow" || d.speed === "fast") speed = d.speed;
     }catch(e){}
   }
 
@@ -707,7 +766,11 @@
     rec.onerror = function(e){
       var standalone = window.navigator.standalone === true ||
         (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches);
-      if(standalone && (e.error === "not-allowed" || e.error === "service-not-allowed")){
+      if(ANDROID && e.error === "not-allowed"){
+        toast("Das Mikrofon ist nicht erlaubt. In Chrome oben auf das Symbol links neben der Adresse tippen → Berechtigungen → Mikrofon erlauben.", 0);
+      }else if(ANDROID && e.error === "service-not-allowed"){
+        toast("Die Spracherkennung ist ausgeschaltet. Bitte prüfen, ob die Google-App installiert und aktiviert ist.", 0);
+      }else if(standalone && (e.error === "not-allowed" || e.error === "service-not-allowed")){
         // iPadOS erlaubt die Spracherkennung nicht in Web-Apps, die ohne Safari-Leiste laufen
         toast("Die Spracherkennung geht nur in Safari. Bitte das Home-Bildschirm-Symbol löschen und neu hinzufügen, dabei „Als Web-App öffnen“ ausschalten.", 0);
       }else if(e.error === "service-not-allowed"){
@@ -753,38 +816,221 @@
     "u":"U", "v":"Vau", "w":"We", "x":"Ix", "y":"Üpsilon", "z":"Zett", "ä":"Ä", "ö":"Ö", "ü":"Ü", "ß":"Eszett"
   };
 
+  /* Stimme: Stimmen des Geräts oder KI-Stimmen (Piper, aus mRead) – im Elternbereich wählbar */
   var voice = null;
+  var FUN = /bad news|bahh|bells|boing|bubbles|cellos|good news|jester|organ|superstar|trinoids|whisper|wobble|zarvox|albert|fred|junior|ralph|kathy|grandma|grandpa|rocko|shelley|eddy|flo|reed|sandy/i;
+  function quality(v){
+    var id = (v.voiceURI + " " + v.name).toLowerCase();
+    if(/premium/.test(id)) return 3;
+    if(/enhanced|erweitert/.test(id)) return 2;
+    return 1;
+  }
+  function germanVoices(){
+    if(!("speechSynthesis" in window)) return [];
+    return speechSynthesis.getVoices()
+      .filter(function(v){ return /^de/i.test(v.lang) && !FUN.test(v.name); })
+      .sort(function(a, b){
+        return quality(b) - quality(a) ||
+          (/anna|petra|helena|marlene|vicki/i.test(b.name) ? 1 : 0) - (/anna|petra|helena|marlene|vicki/i.test(a.name) ? 1 : 0) ||
+          a.name.localeCompare(b.name);
+      });
+  }
   function pickVoice(){
-    if(!("speechSynthesis" in window)) return;
-    var vs = speechSynthesis.getVoices().filter(function(v){ return /^de/i.test(v.lang); });
-    voice = vs.filter(function(v){ return /anna|petra|helena|marlene/i.test(v.name); })[0] || vs[0] || null;
+    var vs = germanVoices();
+    voice = vs.filter(function(v){ return v.voiceURI === voiceURI; })[0] || vs[0] || null;
+    if(!scrim.hidden) renderVoices();
   }
   if("speechSynthesis" in window){
     pickVoice();
     speechSynthesis.addEventListener && speechSynthesis.addEventListener("voiceschanged", pickVoice);
   }
+  var SPEED = { slow: 0.75, normal: 1, fast: 1.3 };   // Faktor auf das Grund-Tempo
+
+  /* ---------- KI-Stimmen (Piper): laufen ganz im Browser, auch ohne Internet ----------
+     Die Dateien liegen bei mRead (gleiche Adresse), dadurch werden sie nur einmal geladen. */
+  var PIPER_BASE = new URL("../mread/", location.href).href;
+  var KI = { kerstin: "Kerstin", ramona: "Ramona", thorsten: "Thorsten" };
+  var KI_INFO = { kerstin: "Frauenstimme", ramona: "Frauenstimme", thorsten: "Männerstimme" };
+  function kiName(){ var n = voiceURI && voiceURI.indexOf("piper:") === 0 ? voiceURI.slice(6) : null; return n && KI[n] ? n : null; }
+  var piper = { name: null, sess: null, cfg: null, loading: null, loadingName: null, modReady: null, onLine: null, onProg: null, chain: Promise.resolve(), ctx: null };
+  var run = null;   // laufendes Vorlesen mit KI-Stimme { cancel, timers, src }
+  function loadScript(src){
+    return new Promise(function(res, rej){
+      var el = document.createElement("script"); el.src = src; el.onload = res;
+      el.onerror = function(){ el.remove(); rej(new Error(src)); };
+      document.head.appendChild(el);
+    });
+  }
+  function fetchProgress(url, onProg){
+    return fetch(url).then(function(r){
+      if(!r.ok) throw new Error(url);
+      var total = +r.headers.get("Content-Length") || 0;
+      if(!onProg || !r.body || !r.body.getReader) return r.arrayBuffer();
+      var rd = r.body.getReader(), chunks = [], got = 0;
+      function pump(){
+        return rd.read().then(function(x){
+          if(x.done) return;
+          chunks.push(x.value); got += x.value.length;
+          onProg(total ? Math.min(1, got / total) : 0);
+          return pump();
+        });
+      }
+      return pump().then(function(){
+        var out = new Uint8Array(got), o = 0;
+        chunks.forEach(function(c){ out.set(c, o); o += c.length; });
+        return out.buffer;
+      });
+    });
+  }
+  function phonemeModule(){
+    if(!piper.modReady){
+      piper.modReady = (typeof createPiperPhonemize === "undefined" ? loadScript(PIPER_BASE + "vendor/piper/piper_phonemize.js") : Promise.resolve()).then(function(){
+        return createPiperPhonemize({
+          print: function(l){ if(piper.onLine) piper.onLine(l); }, printErr: function(){},
+          locateFile: function(f){ return PIPER_BASE + "vendor/piper/" + f; }
+        });
+      }).catch(function(e){ piper.modReady = null; throw e; });
+    }
+    return piper.modReady;
+  }
+  // Lautschrift → Zahlen nach der Tabelle der Stimme
+  function toIds(ph){
+    var map = piper.cfg.phoneme_id_map, ids = map["^"].concat(map["_"]);
+    Array.from(ph.join("").normalize("NFC")).forEach(function(c){ if(map[c]) ids = ids.concat(map[c], map["_"]); });
+    return ids.concat(map["$"]);
+  }
+  function phonemize(texts){
+    return phonemeModule().then(function(mod){
+      var out = [];
+      piper.onLine = function(l){ try{ out.push(toIds(JSON.parse(l).phonemes || [])); }catch(e){} };
+      try{
+        mod.callMain(["-l", piper.cfg.espeak.voice || "de", "--input",
+          JSON.stringify(texts.map(function(t){ return { text: t }; })), "--espeak_data", "/espeak-ng-data"]);
+      }finally{ piper.onLine = null; }
+      while(out.length < texts.length) out.push([]);
+      return out;
+    });
+  }
+  function piperLoad(name, onProg){
+    if(piper.name === name && piper.sess) return Promise.resolve();
+    if(piper.loading && piper.loadingName === name){ if(onProg) piper.onProg = onProg; return piper.loading; }
+    piper.loadingName = name; piper.onProg = onProg;
+    var cfg;
+    var p = (typeof ort === "undefined" ? loadScript(PIPER_BASE + "vendor/ort/ort.wasm.min.js") : Promise.resolve()).then(function(){
+      ort.env.wasm.numThreads = 1;
+      ort.env.wasm.wasmPaths = PIPER_BASE + "vendor/ort/";
+      return fetch(PIPER_BASE + "voices/" + name + ".json");
+    }).then(function(r){ if(!r.ok) throw new Error("json"); return r.json(); }).then(function(c){
+      cfg = c;
+      return Promise.all([fetchProgress(PIPER_BASE + "voices/" + name + ".onnx", function(f){ if(piper.onProg) piper.onProg(f); }), phonemeModule()]);
+    }).then(function(r){ return ort.InferenceSession.create(r[0]); }).then(function(sess){
+      if(piper.sess && piper.sess.release) try{ piper.sess.release(); }catch(e){}
+      piper.sess = sess; piper.cfg = cfg; piper.name = name;
+    });
+    piper.loading = p;
+    p.then(function(){ if(piper.loading === p) piper.loading = null; }, function(){ if(piper.loading === p) piper.loading = null; });
+    return p;
+  }
+  function piperSynth(ids, rate){
+    var len = 1.15 * 0.8 / rate;          // Sprechdauer passend zum Tempo (größer = langsamer)
+    var job = piper.chain.then(function(){
+      var c = piper.cfg.inference;
+      return piper.sess.run({
+        input: new ort.Tensor("int64", BigInt64Array.from(ids.map(function(v){ return BigInt(v); })), [1, ids.length]),
+        input_lengths: new ort.Tensor("int64", BigInt64Array.from([BigInt(ids.length)]), [1]),
+        scales: new ort.Tensor("float32", Float32Array.from([c.noise_scale, c.length_scale * len, c.noise_w]), [3])
+      });
+    }).then(function(r){ return r.output.data; });
+    piper.chain = job.catch(function(){});
+    return job;
+  }
+  // muss beim Antippen aufgerufen werden, sonst bleibt der Ton auf dem iPad stumm
+  function audioCtx(){
+    if(!piper.ctx){
+      var AC = window.AudioContext || window.webkitAudioContext; if(!AC) return null;
+      piper.ctx = new AC();
+      try{ var sb = piper.ctx.createBufferSource(); sb.buffer = piper.ctx.createBuffer(1, 1, 22050); sb.connect(piper.ctx.destination); sb.start(0); }catch(e){}
+    }
+    if(piper.ctx.state === "suspended") piper.ctx.resume();
+    return piper.ctx;
+  }
+  function playPcm(pcm, r){
+    return new Promise(function(res){
+      var ctx = audioCtx();
+      if(!ctx || r.cancel){ res(); return; }
+      var buf = ctx.createBuffer(1, pcm.length, piper.cfg.audio.sample_rate);
+      buf.getChannelData(0).set(pcm);
+      var src = ctx.createBufferSource(); src.buffer = buf; src.connect(ctx.destination);
+      src.onended = function(){ r.src = null; res(); };
+      r.src = src; src.start();
+    });
+  }
+  document.addEventListener("pointerup", function(){ if(kiName()) audioCtx(); }, true);
 
   function clearHighlights(){
     Array.prototype.forEach.call(textEl.querySelectorAll(".hl,.speaking"), function(n){ n.classList.remove("hl", "speaking"); });
   }
   function stopSpeaking(){
     if("speechSynthesis" in window) speechSynthesis.cancel();
+    if(run){
+      run.cancel = true;
+      run.timers.forEach(clearTimeout);
+      if(run.src){ try{ run.src.onended = null; run.src.stop(); }catch(e){} }
+      run = null;
+    }
     clearHighlights();
   }
   // items: [{text, els, cls, rate}]
   function speakSeq(items){
-    if(!opt.audio || !("speechSynthesis" in window) || !items.length) return;
+    if(!opt.audio || !items.length) return;
     stopSpeaking();
+    if(kiName()){ piperSeq(items); return; }
+    if(!("speechSynthesis" in window)) return;
     setTimeout(function(){
       items.forEach(function(it){
         var u = new SpeechSynthesisUtterance(it.text);
-        u.lang = "de-DE"; u.rate = it.rate || 0.8;
+        u.lang = "de-DE"; u.rate = (it.rate || 0.8) * SPEED[speed];
         if(voice) u.voice = voice;
         u.onstart = function(){ it.els.forEach(function(n){ n.classList.add(it.cls); }); };
         u.onend = u.onerror = function(){ it.els.forEach(function(n){ n.classList.remove(it.cls); }); };
         speechSynthesis.speak(u);
       });
     }, 60);
+  }
+  // KI-Stimme: Teil für Teil erzeugen und abspielen, der nächste wird schon berechnet, während der aktuelle läuft
+  function piperSeq(items){
+    var r = run = { cancel: false, timers: [] };
+    audioCtx();
+    var name = kiName();
+    if(!(piper.name === name && piper.sess)) toast("Die KI-Stimme " + KI[name] + " wird vorbereitet …");
+    piperLoad(name, function(f){ if(run === r && f > 0) toast("Die KI-Stimme " + KI[name] + " wird geladen … " + Math.round(f * 100) + " %"); }).then(function(){
+      return phonemize(items.map(function(it){ return it.text; }));
+    }).then(function(ph){
+      if(r.cancel) return;
+      msg.hidden = true;
+      var i = 0;
+      function synth(k){ return piperSynth(ph[k], (items[k].rate || 0.8) * SPEED[speed]); }
+      function step(pcmP){
+        var it = items[i];
+        var next = i + 1 < items.length ? synth(i + 1) : null;
+        return pcmP.then(function(pcm){
+          if(r.cancel) return;
+          it.els.forEach(function(n){ n.classList.add(it.cls); });
+          return playPcm(pcm, r);
+        }).then(function(){
+          it.els.forEach(function(n){ n.classList.remove(it.cls); });
+          if(r.cancel) return;
+          i++;
+          if(i >= items.length){ run = null; return; }
+          return new Promise(function(res){ r.timers.push(setTimeout(res, 90)); }).then(function(){ if(!r.cancel) return step(next); });
+        });
+      }
+      return step(synth(0));
+    }).catch(function(){
+      if(run !== r) return;
+      run = null; clearHighlights();
+      toast("Die KI-Stimme konnte nicht geladen werden. Beim ersten Mal braucht sie Internet.", 5000);
+    });
   }
 
   function letterEls(w){ return Array.prototype.slice.call(w.querySelectorAll(".l:not(.p)")); }
@@ -937,8 +1183,76 @@
   /* ---------- Einstellungen ---------- */
   function openPanel(){
     for(var k in optEls) optEls[k].checked = opt[k];
+    pickVoice(); renderVoices(); renderKi(); renderSpeeds();
     scrim.hidden = false;
   }
+  var voicesEl = $("voices"), kiEl = $("kiVoices"), speedsEl = $("speeds"), kiProg = {};
+  var SAMPLE = "Hallo! So klinge ich.";
+  var SPEAKER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/></svg>';
+  function sample(){ speakSeq([{ text: SAMPLE, els: [], cls: "speaking", rate: 0.8 }]); }
+  function renderVoices(){
+    var vs = germanVoices();
+    voicesEl.replaceChildren();
+    if(!vs.length){ var p = document.createElement("p"); p.className = "phint"; p.textContent = "Keine deutsche Stimme gefunden."; voicesEl.appendChild(p); return; }
+    vs.forEach(function(v){
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "voice"; b.setAttribute("role", "radio");
+      b.setAttribute("aria-checked", String(!kiName() && voice && v.voiceURI === voice.voiceURI));
+      var nm = document.createElement("span"); nm.className = "nm";
+      nm.textContent = v.name.replace(/\s*\((Erweitert|Enhanced|Premium)\)/i, "");
+      b.appendChild(nm);
+      var q = quality(v);
+      if(q > 1){ var tag = document.createElement("span"); tag.className = "tag"; tag.textContent = q === 3 ? "Premium" : "Erweitert"; b.appendChild(tag); }
+      b.insertAdjacentHTML("beforeend", SPEAKER);
+      b.addEventListener("click", function(){
+        voiceURI = v.voiceURI; voice = v; save();
+        renderVoices(); renderKi(); sample();
+      });
+      voicesEl.appendChild(b);
+    });
+  }
+  function renderKi(){
+    kiEl.replaceChildren();
+    Object.keys(KI).forEach(function(name){
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "voice"; b.setAttribute("role", "radio"); b.dataset.ki = name;
+      b.setAttribute("aria-checked", String(kiName() === name));
+      var nm = document.createElement("span"); nm.className = "nm";
+      nm.innerHTML = KI[name] + ' <span class="prog"></span>';
+      nm.querySelector(".prog").textContent = kiProg[name] || KI_INFO[name];
+      b.appendChild(nm);
+      var tag = document.createElement("span"); tag.className = "tag ki"; tag.textContent = "KI"; b.appendChild(tag);
+      b.insertAdjacentHTML("beforeend", SPEAKER);
+      b.addEventListener("click", function(){
+        stopSpeaking();
+        voiceURI = "piper:" + name; save();
+        renderVoices(); renderKi();
+        audioCtx();
+        var prog = function(t){ kiProg[name] = t; var el = kiEl.querySelector('[data-ki="' + name + '"] .prog'); if(el) el.textContent = t; };
+        if(!(piper.name === name && piper.sess)) prog("wird vorbereitet …");
+        piperLoad(name, function(f){ prog("lädt … " + Math.round(f * 100) + " %"); }).then(function(){
+          prog("bereit – auch ohne Internet");
+          if(kiName() === name) sample();
+        }).catch(function(){ prog("Laden fehlgeschlagen – nochmal tippen"); });
+      });
+      kiEl.appendChild(b);
+      if(!kiProg[name] && window.caches) caches.match(PIPER_BASE + "voices/" + name + ".onnx").then(function(hit){
+        if(hit && !kiProg[name]){ kiProg[name] = "geladen – auch ohne Internet"; var el = b.querySelector(".prog"); if(el) el.textContent = kiProg[name]; }
+      }).catch(function(){});
+    });
+  }
+  var SPEED_UI = { slow: [ICON_SLOW, "Langsam"], normal: [ICON_NORMAL, "Normal"], fast: [ICON_FAST, "Schnell"] };
+  function renderSpeeds(){
+    Array.prototype.forEach.call(speedsEl.children, function(b){
+      var k = b.dataset.speed;
+      b.innerHTML = SPEED_UI[k][0] + "<span>" + SPEED_UI[k][1] + "</span>";
+      b.setAttribute("aria-pressed", String(speed === k));
+    });
+  }
+  speedsEl.addEventListener("click", function(e){
+    var b = e.target.closest("button"); if(!b) return;
+    speed = b.dataset.speed; save(); renderSpeeds(); sample();
+  });
   function closePanel(){ scrim.hidden = true; }
   gearBtn.addEventListener("click", function(){
     if(listening) return;
@@ -1029,6 +1343,12 @@
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ fit(); });
 
   load();
+  pickVoice();
+  if(ANDROID) $("devVoicesTitle").textContent = Math.min(screen.width, screen.height) < 600 ? "Stimmen des Handys" : "Stimmen des Tablets";
+  // Offline-Speicher: App und Schrift bleiben auf dem Gerät (siehe sw.js)
+  if("serviceWorker" in navigator && location.protocol !== "file:"){
+    window.addEventListener("load", function(){ navigator.serviceWorker.register("sw.js").catch(function(){}); });
+  }
   spellBtn.setAttribute("aria-pressed", String(spell));
   applyAudio();
   setUpper(upper);

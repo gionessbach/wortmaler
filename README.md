@@ -1,6 +1,6 @@
 # Wortmaler
 
-Eine einfache Web-App fürs iPad, die Kinder (5–6 Jahre) zum Schreiben animiert. Gesprochene Wörter erscheinen live und riesig in kindgerechter Druckschrift.
+Eine einfache Web-App fürs iPad (und für Android-Handys/-Tablets), die Kinder (5–6 Jahre) zum Schreiben animiert. Gesprochene Wörter erscheinen live und riesig in kindgerechter Druckschrift.
 
 **App öffnen:** https://gionessbach.github.io/wortmaler/
 
@@ -24,6 +24,8 @@ Der Elternbereich ist mit einem vierstelligen Code geschützt. Beim allerersten 
 
 - **Vorlesen:** Schaltet das Vorlesen von Wörtern und den Buchstabier-Knopf an oder aus.
 - **Buchstaben nacheinander:** Neue Wörter bauen sich Buchstabe für Buchstabe auf.
+- **Stimme:** Stimmen des Geräts zum Probehören oder eine der **KI-Stimmen** Kerstin, Ramona (Frauenstimmen) und Thorsten (Männerstimme). KI-Stimmen klingen natürlicher und funktionieren ohne Internet; beim ersten Antippen werden sie einmalig geladen (ca. 90 MB, am besten im WLAN). Sie kommen aus [mRead](https://gionessbach.github.io/mread/) – wurde eine Stimme dort schon geladen, ist sie hier sofort da. Braucht iPadOS 16.4 oder neuer.
+- **Tempo beim Vorlesen:** Langsam (Schildkröte), Normal (Igel) oder Schnell (Hase).
 - **Satzzeichen automatisch:** ein- und ausschaltbar.
 - **Arbeitsblatt drucken:** Alle gesammelten Wörter mit Schreiblinien und zwei leeren Zeilen zum Nachschreiben.
 - **Code ändern:** Neuen Code festlegen.
@@ -39,6 +41,14 @@ Die Schrift ist [Andika](https://fonts.google.com/specimen/Andika), eine Drucksc
 3. Über **Teilen → Zum Home-Bildschirm** als App-Symbol ablegen.
 4. Tipp: Mit dem **Geführten Zugriff** (Einstellungen → Bedienungshilfen) lässt sich das iPad auf diese App sperren.
 
+## Einrichtung auf Android
+
+1. Die Adresse oben in **Chrome** öffnen.
+2. Beim ersten Tippen auf das Mikrofon den Zugriff erlauben. Die Spracherkennung kommt von Google und braucht Internet.
+3. Menü (⋮) → **App installieren** bzw. **Zum Startbildschirm hinzufügen**.
+
+Auf dem Handy ist die Ansicht automatisch kompakter.
+
 ## Wortfilter erweitern
 
 In `index.html` nach `EIGENE_WOERTER` suchen und Wörter klein geschrieben (ß als ss) eintragen:
@@ -49,7 +59,7 @@ var EIGENE_WOERTER = ["doofi", "bloedmann"];
 
 ## Hinweise
 
-- Die Spracherkennung läuft über Safari bzw. Apple und braucht eine **Internetverbindung**.
+- Die Spracherkennung läuft über Safari bzw. Apple (auf Android: Google) und braucht eine **Internetverbindung**. Die App selbst, die Schrift und einmal geladene KI-Stimmen sind auf dem Gerät gespeichert; Wortmaler startet also auch ohne Internet, und Vorlesen mit KI-Stimme geht offline.
 - iPadOS erlaubt die Spracherkennung nur in Safari selbst, nicht in Web-Apps ohne Safari-Leiste. Das Home-Bildschirm-Symbol öffnet die App deshalb in Safari. Falls beim Hinzufügen „Als Web-App öffnen“ angeboten wird, diesen Schalter ausschalten.
 - Die Spracherkennung braucht die eingeschaltete **Diktierfunktion** (Einstellungen → Allgemein → Tastatur).
 - Der Code ist eine Kindersicherung, kein Passwortschutz. Er wird nur auf dem iPad gespeichert.
@@ -57,6 +67,6 @@ var EIGENE_WOERTER = ["doofi", "bloedmann"];
 
 ## Technik
 
-Eine einzige Datei (`index.html`) ohne Abhängigkeiten oder Build-Schritt. Genutzt werden die Web Speech API (Erkennung und Vorlesen) und `localStorage`. Gehostet über GitHub Pages, das für den Mikrofonzugriff nötige HTTPS ist dort automatisch dabei.
+Eine einzige Datei (`index.html`) ohne Build-Schritt. Genutzt werden die Web Speech API (Erkennung und Vorlesen) und `localStorage`. Die Schrift liegt in `vendor/andika`, `sw.js` speichert die App für den Offline-Start. KI-Stimmen: [Piper](https://github.com/rhasspy/piper) mit onnxruntime-web, die Dateien werden aus `../mread/` geladen (gleiche Adresse auf GitHub Pages). `manifest.webmanifest` nutzt `"display": "minimal-ui"`, damit das iPad die App vom Home-Bildschirm weiterhin in Safari öffnet (sonst funktioniert dort das Mikrofon nicht). Gehostet über GitHub Pages, das für den Mikrofonzugriff nötige HTTPS ist dort automatisch dabei.
 
 Gedacht für die private Nutzung auf einem eigenen iPad.
