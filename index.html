@@ -923,7 +923,32 @@
 
   /* ---------- KI-Stimmen (Piper): laufen ganz im Browser, auch ohne Internet ----------
      Die Dateien liegen bei mRead (gleiche Adresse), dadurch werden sie nur einmal geladen. */
-  var PIPER_BASE = new URL("../mread/", location.href).href;
+  // mRead liegt unter …/mRead/ oder …/mread/ (GitHub unterscheidet Groß- und Kleinschreibung) – passende Adresse suchen
+  var PIPER_BASE = new URL("../mread/", location.href).href, baseReady = null;
+  function findBase(){
+    if(baseReady) return baseReady;
+    var cands = ["../mRead/", "../mread/"].map(function(u){ return new URL(u, location.href).href; });
+    // 1) Stimme schon in mRead geladen? Dann die Adresse aus dem Speicher nehmen
+    var fromCache = !window.caches ? Promise.resolve(null) : caches.keys().then(function(keys){
+      return Promise.all(keys.map(function(k){ return caches.open(k).then(function(c){ return c.keys(); }); }));
+    }).then(function(lists){
+      var hit = null;
+      lists.forEach(function(reqs){ reqs.forEach(function(r){ var m = /^(.*\/m[rR]ead\/)voices\/[a-z]+\.onnx$/.exec(r.url); if(m && !hit) hit = m[1]; }); });
+      return hit;
+    }).catch(function(){ return null; });
+    baseReady = fromCache.then(function(hit){
+      if(hit) return hit;
+      // 2) sonst nachsehen, unter welcher Adresse mRead erreichbar ist
+      var i = 0;
+      function next(){
+        if(i >= cands.length) throw new Error("mRead nicht gefunden");
+        var u = cands[i++];
+        return fetch(u + "voices/kerstin.json", { cache: "no-store" }).then(function(r){ if(r.ok) return u; return next(); }, next);
+      }
+      return next();
+    }).then(function(u){ PIPER_BASE = u; return u; }, function(e){ baseReady = null; throw e; });
+    return baseReady;
+  }
   var KI = { kerstin: "Kerstin", ramona: "Ramona", thorsten: "Thorsten" };
   var KI_INFO = { kerstin: "Frauenstimme", ramona: "Frauenstimme", thorsten: "Männerstimme" };
   function kiName(){ var n = voiceURI && voiceURI.indexOf("piper:") === 0 ? voiceURI.slice(6) : null; return n && KI[n] ? n : null; }
@@ -990,18 +1015,24 @@
     if(piper.name === name && piper.sess) return Promise.resolve();
     if(piper.loading && piper.loadingName === name){ if(onProg) piper.onProg = onProg; return piper.loading; }
     piper.loadingName = name; piper.onProg = onProg;
-    var cfg;
-    var p = (typeof ort === "undefined" ? loadScript(PIPER_BASE + "vendor/ort/ort.wasm.min.js") : Promise.resolve()).then(function(){
+    var cfg, step = "Adresse";
+    var p = findBase().then(function(){
+      step = "Sprachprogramm";
+      return typeof ort === "undefined" ? loadScript(PIPER_BASE + "vendor/ort/ort.wasm.min.js") : null;
+    }).then(function(){
       ort.env.wasm.numThreads = 1;
       ort.env.wasm.wasmPaths = PIPER_BASE + "vendor/ort/";
+      step = "Stimmdaten";
       return fetch(PIPER_BASE + "voices/" + name + ".json");
-    }).then(function(r){ if(!r.ok) throw new Error("json"); return r.json(); }).then(function(c){
-      cfg = c;
-      return Promise.all([fetchProgress(PIPER_BASE + "voices/" + name + ".onnx", function(f){ if(piper.onProg) piper.onProg(f); }), phonemeModule()]);
-    }).then(function(r){ return ort.InferenceSession.create(r[0]); }).then(function(sess){
+    }).then(function(r){ if(!r.ok) throw new Error("HTTP " + r.status); return r.json(); }).then(function(c){
+      cfg = c; step = "Stimme laden";
+      return Promise.all([fetchProgress(PIPER_BASE + "voices/" + name + ".onnx", function(f){ if(piper.onProg) piper.onProg(f); }),
+                          phonemeModule().catch(function(e){ step = "Lautschrift"; throw e; })]);
+    }).then(function(r){ step = "Stimme starten"; return ort.InferenceSession.create(r[0]); }).then(function(sess){
       if(piper.sess && piper.sess.release) try{ piper.sess.release(); }catch(e){}
       piper.sess = sess; piper.cfg = cfg; piper.name = name;
     });
+    p = p.catch(function(e){ var err = new Error(step + ": " + ((e && e.message) || e)); throw err; });
     piper.loading = p;
     p.then(function(){ if(piper.loading === p) piper.loading = null; }, function(){ if(piper.loading === p) piper.loading = null; });
     return p;
@@ -1308,10 +1339,10 @@
         piperLoad(name, function(f){ prog("lädt … " + Math.round(f * 100) + " %"); }).then(function(){
           prog("bereit – auch ohne Internet");
           if(kiName() === name) sample();
-        }).catch(function(){ prog("Laden fehlgeschlagen – nochmal tippen"); });
+        }).catch(function(e){ prog("Laden fehlgeschlagen – nochmal tippen (" + String(e && e.message || e).slice(0, 80) + ")"); });
       });
       kiEl.appendChild(b);
-      if(!kiProg[name] && window.caches) caches.match(PIPER_BASE + "voices/" + name + ".onnx").then(function(hit){
+      if(!kiProg[name] && window.caches) findBase().then(function(){ return caches.match(PIPER_BASE + "voices/" + name + ".onnx"); }).then(function(hit){
         if(hit && !kiProg[name]){ kiProg[name] = "geladen – auch ohne Internet"; var el = b.querySelector(".prog"); if(el) el.textContent = kiProg[name]; }
       }).catch(function(){});
     });
