@@ -776,7 +776,7 @@
         useKeyboard = true;
         toast("Dieser Browser kann die Spracherkennung nicht nutzen. Tippe nochmal auf das rote Mikrofon: Dann öffnet sich die Tastatur – dort auf das kleine Mikrofon tippen und sprechen. Ohne Tastatur geht es in Google Chrome.", 0);
       }else if(ANDROID && e.error === "not-allowed"){
-        toast("Das Mikrofon ist nicht erlaubt. In Chrome oben rechts auf ⋮ tippen → oben im Menü auf ⓘ → Berechtigungen → Mikrofon → Zulassen. Hilft das nicht: Android-Einstellungen → Apps → Chrome → Berechtigungen → Mikrofon → Zulassen.", 0);
+        toast("Das Mikrofon ist nicht erlaubt. In Chrome oben rechts auf ⋮ tippen → Website-Einstellungen → Mikrofon → gionessbach.github.io auf „Zulassen“ stellen. Hilft das nicht: Android-Einstellungen → Apps → Chrome → Berechtigungen → Mikrofon → Zulassen.", 0);
       }else if(ANDROID && e.error === "service-not-allowed"){
         toast("Die Spracherkennung ist ausgeschaltet. Bitte prüfen, ob die Google-App installiert und aktiviert ist.", 0);
       }else if(standalone && (e.error === "not-allowed" || e.error === "service-not-allowed")){
