@@ -45,6 +45,7 @@ Die Schrift ist [Andika](https://fonts.google.com/specimen/Andika), eine Drucksc
 
 1. Die Adresse oben in **Chrome** öffnen.
 2. Beim ersten Tippen auf das Mikrofon den Zugriff erlauben. Die Spracherkennung kommt von Google und braucht Internet.
+   Aus Versehen abgelehnt? In Chrome ⋮ → oben im Menü ⓘ → Berechtigungen → Mikrofon → Zulassen (oder ⋮ → Einstellungen → Website-Einstellungen → Mikrofon). Zusätzlich muss Chrome selbst das Mikrofon nutzen dürfen: Android-Einstellungen → Apps → Chrome → Berechtigungen → Mikrofon.
 3. Menü (⋮) → **App installieren** bzw. **Zum Startbildschirm hinzufügen**.
 
 Auf dem Handy ist die Ansicht automatisch kompakter.
