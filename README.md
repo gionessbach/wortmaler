@@ -49,6 +49,8 @@ Die Schrift ist [Andika](https://fonts.google.com/specimen/Andika), eine Drucksc
 
 Auf dem Handy ist die Ansicht automatisch kompakter.
 
+**Andere Browser (z. B. Ecosia, Brave):** Sie geben sich zwar als Chrome aus, haben aber keinen Zugang zur Google-Spracherkennung – dann hilft auch keine Mikrofon-Berechtigung. Wortmaler merkt das beim ersten Versuch und schaltet um: Nochmal auf das rote Mikrofon tippen, die Tastatur öffnet sich, dort auf das kleine Mikrofon tippen und sprechen (Diktieren über die Google-Tastatur). Danach wieder auf das rote Mikrofon tippen. Bequemer ist es in **Google Chrome**, dort geht es ohne Tastatur.
+
 ## Wortfilter erweitern
 
 In `index.html` nach `EIGENE_WOERTER` suchen und Wörter klein geschrieben (ß als ss) eintragen:

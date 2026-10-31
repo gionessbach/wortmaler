@@ -379,6 +379,11 @@
 
   /* ---------- Gerät: iPad oder Android ---------- */
   var ANDROID = /Android/i.test(navigator.userAgent);
+  // Echtes Google Chrome? Andere Android-Browser (Ecosia, Brave, …) geben sich oft als Chrome aus,
+  // haben aber keinen Zugang zur Google-Spracherkennung.
+  var REAL_CHROME = !!(navigator.userAgentData && navigator.userAgentData.brands &&
+    navigator.userAgentData.brands.some(function(b){ return b.brand === "Google Chrome"; }));
+  var useKeyboard = false;   // Spracherkennung geht in diesem Browser nicht: Diktieren über die Tastatur
 
   var profi = false, profiStart = 0, phase = "idle", phaseTimer = null;
   var animFrom = -1, animStart = 0, ANIM_STEP = 140;
@@ -744,7 +749,7 @@
   function start(){
     stopSpeaking();
     if(profi) newRound();
-    if(!SR){ startFallback(); return; }
+    if(!SR || useKeyboard){ startFallback(); return; }
     rec = new SR();
     rec.lang = "de-DE";
     rec.interimResults = true;
@@ -766,8 +771,12 @@
     rec.onerror = function(e){
       var standalone = window.navigator.standalone === true ||
         (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches);
-      if(ANDROID && e.error === "not-allowed"){
-        toast("Das Mikrofon ist nicht erlaubt. In Chrome oben auf das Symbol links neben der Adresse tippen → Berechtigungen → Mikrofon erlauben.", 0);
+      if(ANDROID && !REAL_CHROME && /not-allowed|service-not-allowed|network|audio-capture/.test(e.error) && navigator.onLine !== false){
+        // z. B. Ecosia: kein Zugang zur Spracherkennung – ab jetzt über die Tastatur diktieren
+        useKeyboard = true;
+        toast("Dieser Browser kann die Spracherkennung nicht nutzen. Tippe nochmal auf das rote Mikrofon: Dann öffnet sich die Tastatur – dort auf das kleine Mikrofon tippen und sprechen. Ohne Tastatur geht es in Google Chrome.", 0);
+      }else if(ANDROID && e.error === "not-allowed"){
+        toast("Das Mikrofon ist nicht erlaubt. In Chrome links neben der Adresse auf das Symbol tippen → Berechtigungen → Mikrofon erlauben. Hilft das nicht: Android-Einstellungen → Apps → Chrome → Berechtigungen → Mikrofon.", 0);
       }else if(ANDROID && e.error === "service-not-allowed"){
         toast("Die Spracherkennung ist ausgeschaltet. Bitte prüfen, ob die Google-App installiert und aktiviert ist.", 0);
       }else if(standalone && (e.error === "not-allowed" || e.error === "service-not-allowed")){
@@ -798,7 +807,8 @@
     fallback.value = "";
     fallback.focus();
     setMic(true);
-    toast("Tippe auf der Tastatur auf das Mikrofon und sprich.", 4000);
+    toast(ANDROID ? "Tippe auf der Tastatur auf das kleine Mikrofon und sprich. Danach wieder auf das rote Mikrofon tippen." :
+                    "Tippe auf der Tastatur auf das Mikrofon und sprich.", 5000);
   }
   fallback.addEventListener("input", function(){ live = fallback.value; render(); });
   fallback.addEventListener("keydown", function(e){ if(e.key === "Enter"){ e.preventDefault(); stop(); } });
