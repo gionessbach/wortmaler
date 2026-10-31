@@ -175,6 +175,19 @@
   .speeds button[aria-pressed="true"]{border-color:var(--ink);background:#EEF3FB}
   .speeds svg{width:38px;height:38px}
 
+  /* Mikrofon-Hilfe (Android) */
+  .micbox{width:min(440px,100%);max-height:100%;overflow-y:auto;background:var(--sheet);border-radius:22px;padding:20px 22px;
+    box-shadow:0 16px 48px rgba(29,39,66,.3);display:flex;flex-direction:column;gap:10px}
+  .micbox h2{margin:0;font-size:21px;font-weight:700}
+  .micbox p{margin:0;color:#6B7690;font-size:15px;line-height:1.45}
+  .micstep{border:2px solid var(--line);border-radius:16px;padding:12px 14px}
+  .micstep h3{margin:0 0 6px;font-size:17px;display:flex;align-items:center;gap:8px}
+  .micstep h3 .n{width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;font-size:15px;display:grid;place-items:center;flex:none}
+  .micstep ol{margin:0;padding-left:20px;font-size:15px;line-height:1.5;color:var(--ink)}
+  .micstate{font-size:15px;font-weight:600;padding:8px 12px;border-radius:12px;background:#EEF3FB;color:var(--ink)}
+  .micstate.bad{background:#FDECE8;color:#9E2A12} .micstate.good{background:#E3F4EC;color:#1D6B47}
+  .micbtn{height:54px;border-radius:14px;border:0;background:var(--mic);color:#fff;font-size:18px;font-weight:700;cursor:pointer}
+
   /* Code-Eingabe für den Elternbereich */
   .pinscrim{
     position:fixed;inset:0;z-index:20;background:rgba(29,39,66,.45);display:flex;align-items:center;justify-content:center;
@@ -327,6 +340,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="7"/></svg>
       Arbeitsblatt drucken
     </button>
+    <button id="micHelpBtn" class="linkbtn" type="button" hidden>Mikrofon geht nicht? Hilfe</button>
     <button id="changePinBtn" class="linkbtn" type="button">Code ändern</button>
   </div>
 </div>
@@ -342,6 +356,26 @@
       <button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button>
       <button type="button" class="plain" data-k="cancel" id="pinCancel">Abbrechen</button><button type="button" data-k="0">0</button><button type="button" class="plain" data-k="del" aria-label="Löschen">⌫</button>
     </div>
+  </div>
+</div>
+
+<div class="pinscrim" id="micHelp" hidden>
+  <div class="micbox" role="dialog" aria-modal="true" aria-labelledby="micHelpTitle">
+    <h2 id="micHelpTitle">Mikrofon erlauben</h2>
+    <p>Damit Wortmaler zuhören kann, braucht es <b>zwei</b> Erlaubnisse: für die App Chrome und für diese Seite.</p>
+    <div class="micstate" id="micState">Prüfe …</div>
+    <button id="micAsk" class="micbtn" type="button">Mikrofon jetzt erlauben</button>
+    <p>Fragt Chrome bzw. Android nach dem Mikrofon, mit „Zulassen“ antworten. Kommt keine Frage, bitte selbst einstellen:</p>
+    <div class="micstep">
+      <h3><span class="n">1</span>Chrome darf das Mikrofon nutzen</h3>
+      <ol><li>Android-<b>Einstellungen</b> öffnen</li><li><b>Apps</b> → <b>Chrome</b> (nicht Wortmaler)</li><li><b>Berechtigungen</b> → <b>Mikrofon</b></li><li>„Nur während der Nutzung der App zulassen“</li></ol>
+    </div>
+    <div class="micstep">
+      <h3><span class="n">2</span>Diese Seite darf das Mikrofon nutzen</h3>
+      <ol><li>Die <b>Chrome-App</b> öffnen</li><li><b>⋮</b> → <b>Einstellungen</b> → <b>Website-Einstellungen</b></li><li><b>Alle Websites</b> → <b>gionessbach.github.io</b></li><li><b>Mikrofon</b> → <b>Zulassen</b></li></ol>
+    </div>
+    <p>Direkt in die Einstellungen springen kann eine Webseite leider nicht – das erlaubt Android aus Sicherheitsgründen nicht.</p>
+    <button id="micHelpClose" class="linkbtn" type="button">Schließen</button>
   </div>
 </div>
 
@@ -776,7 +810,7 @@
         useKeyboard = true;
         toast("Dieser Browser kann die Spracherkennung nicht nutzen. Tippe nochmal auf das rote Mikrofon: Dann öffnet sich die Tastatur – dort auf das kleine Mikrofon tippen und sprechen. Ohne Tastatur geht es in Google Chrome.", 0);
       }else if(ANDROID && e.error === "not-allowed"){
-        toast("Das Mikrofon ist nicht erlaubt. In Chrome oben rechts auf ⋮ tippen → Website-Einstellungen → Mikrofon → gionessbach.github.io auf „Zulassen“ stellen. Hilft das nicht: Android-Einstellungen → Apps → Chrome → Berechtigungen → Mikrofon → Zulassen.", 0);
+        showMicHelp();
       }else if(ANDROID && e.error === "service-not-allowed"){
         toast("Die Spracherkennung ist ausgeschaltet. Bitte prüfen, ob die Google-App installiert und aktiviert ist.", 0);
       }else if(standalone && (e.error === "not-allowed" || e.error === "service-not-allowed")){
@@ -800,6 +834,37 @@
   function stop(){
     if(rec){ try{ rec.stop(); }catch(e){ rec = null; listening = false; commit(); setMic(false); } }
     else if(listening){ listening = false; commit(); setMic(false); fallback.blur(); }
+  }
+
+  /* Android: Hilfe, wenn das Mikrofon nicht erlaubt ist */
+  var micHelp = $("micHelp"), micState = $("micState"), micAsk = $("micAsk");
+  function setMicState(t, cls){ micState.textContent = t; micState.className = "micstate" + (cls ? " " + cls : ""); }
+  function checkMic(){
+    if(!navigator.permissions || !navigator.permissions.query){ setMicState("Status unbekannt – bitte die Schritte unten prüfen."); return; }
+    navigator.permissions.query({ name: "microphone" }).then(function(st){
+      if(st.state === "granted") setMicState("Diese Seite darf das Mikrofon nutzen. Prüfe Schritt 1 (Chrome).", "good");
+      else if(st.state === "denied") setMicState("Diese Seite ist für das Mikrofon blockiert – siehe Schritt 2.", "bad");
+      else setMicState("Diese Seite hat noch keine Erlaubnis. Tippe auf den roten Knopf.");
+      st.onchange = checkMic;
+    }).catch(function(){ setMicState("Status unbekannt – bitte die Schritte unten prüfen."); });
+  }
+  function showMicHelp(){ msg.hidden = true; checkMic(); micHelp.hidden = false; }
+  micAsk.addEventListener("click", function(){
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ setMicState("Dieser Browser kann nicht nach dem Mikrofon fragen.", "bad"); return; }
+    // Löst die Fragen von Chrome und Android aus (falls noch möglich)
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream){
+      stream.getTracks().forEach(function(t){ t.stop(); });
+      setMicState("Das Mikrofon ist erlaubt! Jetzt auf das rote Mikrofon tippen.", "good");
+      setTimeout(function(){ micHelp.hidden = true; }, 1500);
+    }).catch(function(err){
+      if(err && err.name === "NotFoundError") setMicState("Kein Mikrofon gefunden.", "bad");
+      else setMicState("Noch nicht erlaubt. Bitte Schritt 1 und 2 unten selbst einstellen und danach Wortmaler neu öffnen.", "bad");
+    });
+  });
+  $("micHelpClose").addEventListener("click", function(){ micHelp.hidden = true; });
+  if(ANDROID){
+    $("micHelpBtn").hidden = false;
+    $("micHelpBtn").addEventListener("click", function(){ closePanel(); showMicHelp(); });
   }
 
   /* Ersatz: Diktierfunktion der iPad-Tastatur */

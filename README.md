@@ -45,6 +45,7 @@ Die Schrift ist [Andika](https://fonts.google.com/specimen/Andika), eine Drucksc
 
 1. Die Adresse oben in **Chrome** öffnen.
 2. Beim ersten Tippen auf das Mikrofon den Zugriff erlauben. Die Spracherkennung kommt von Google und braucht Internet.
+   Geht das Mikrofon nicht, öffnet Wortmaler eine **Mikrofon-Hilfe** (auch im Elternbereich unter „Mikrofon geht nicht? Hilfe“): Sie zeigt, ob die Seite das Mikrofon nutzen darf, und mit „Mikrofon jetzt erlauben“ fragen Chrome und Android erneut nach. Es braucht **zwei** Erlaubnisse – für die App Chrome und für die Seite. Direkt in die Android-Einstellungen springen kann eine Webseite nicht.
    Aus Versehen abgelehnt? In Chrome ⋮ → **Website-Einstellungen** → **Mikrofon** → „gionessbach.github.io“ auf „Zulassen“ stellen (bei älteren Chrome-Versionen: ⋮ → Einstellungen → Website-Einstellungen → Mikrofon). Zusätzlich muss Chrome selbst das Mikrofon nutzen dürfen: Android-Einstellungen → Apps → Chrome → Berechtigungen → Mikrofon.
 3. Menü (⋮) → **App installieren** bzw. **Zum Startbildschirm hinzufügen**.
 
