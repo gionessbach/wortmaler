@@ -53,6 +53,17 @@ Auf dem Handy ist die Ansicht automatisch kompakter.
 
 **Andere Browser (z. B. Ecosia, Brave):** Sie geben sich zwar als Chrome aus, haben aber keinen Zugang zur Google-Spracherkennung – dann hilft auch keine Mikrofon-Berechtigung. Wortmaler merkt das beim ersten Versuch und schaltet um: Nochmal auf das rote Mikrofon tippen, die Tastatur öffnet sich, dort auf das kleine Mikrofon tippen und sprechen (Diktieren über die Google-Tastatur). Danach wieder auf das rote Mikrofon tippen. Bequemer ist es in **Google Chrome**, dort geht es ohne Tastatur.
 
+## Aussprache der KI-Stimmen korrigieren
+
+Die KI-Stimmen wandeln Text zuerst in Lautschrift um (espeak). Dabei werden manche Wörter falsch gelesen, z. B. ein zu kurzer Vokal („Wüste“ wie „wüsste“) oder eine falsche Betonung in zusammengesetzten Wörtern („Kamelhaar“). In `index.html` nach `AUSSPRACHE` suchen und eine Zeile ergänzen – das Wort so umschreiben, wie es klingen soll:
+
+```js
+[/(^|[^A-Za-zÄÖÜäöüß])([Ww])üst/g, "$1$2ühst"],   // ein „h“ macht den Vokal lang
+[/(^|[^A-Za-zÄÖÜäöüß])(Kamel|Honig)(?=[a-zäöüß]{3,})/g, "$1$2-"]  // Bindestrich trennt Wortteile
+```
+
+Außerdem automatisch korrigiert: kurzes „u“ + „r“ (durch, Turm, Burg) ging bisher verloren, und Thorsten spricht das weiche „ch“ (ich, Honig) jetzt als hartes „ch“ (wie in „Bach“), weil er es sonst verschluckt. Kerstin und Pavoque verschlucken das weiche „ch“ teilweise weiterhin; das liegt an ihren Sprachmodellen.
+
 ## Wortfilter erweitern
 
 In `index.html` nach `EIGENE_WOERTER` suchen und Wörter klein geschrieben (ß als ss) eintragen:
