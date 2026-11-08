@@ -24,7 +24,7 @@ Der Elternbereich ist mit einem vierstelligen Code geschützt. Beim allerersten 
 
 - **Vorlesen:** Schaltet das Vorlesen von Wörtern und den Buchstabier-Knopf an oder aus.
 - **Buchstaben nacheinander:** Neue Wörter bauen sich Buchstabe für Buchstabe auf.
-- **Stimme:** Stimmen des Geräts zum Probehören oder eine der **KI-Stimmen** Kerstin, Ramona (Frauenstimmen) und Thorsten (Männerstimme). KI-Stimmen klingen natürlicher und funktionieren ohne Internet; beim ersten Antippen werden sie einmalig geladen (ca. 90 MB, am besten im WLAN). Sie kommen aus [mRead](https://gionessbach.github.io/mread/) – wurde eine Stimme dort schon geladen, ist sie hier sofort da. Braucht iPadOS 16.4 oder neuer.
+- **Stimme:** Stimmen des Geräts zum Probehören oder die **KI-Stimme** Thorsten (Männerstimme). Sie klingt natürlicher und funktioniert ohne Internet. Die übrigen KI-Stimmen aus mRead sprechen einzelne Wörter zu undeutlich und werden deshalb hier nicht angeboten; einzelne Wörter werden mit Satzbetonung erzeugt und der Klang wird lauter und klarer gemacht; beim ersten Antippen werden sie einmalig geladen (ca. 90 MB, am besten im WLAN). Sie kommen aus [mRead](https://gionessbach.github.io/mread/) – wurde eine Stimme dort schon geladen, ist sie hier sofort da. Braucht iPadOS 16.4 oder neuer.
 - **Tempo beim Vorlesen:** Langsam (Schildkröte), Normal (Igel) oder Schnell (Hase).
 - **Satzzeichen automatisch:** ein- und ausschaltbar.
 - **Arbeitsblatt drucken:** Alle gesammelten Wörter mit Schreiblinien und zwei leeren Zeilen zum Nachschreiben.

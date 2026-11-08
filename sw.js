@@ -3,7 +3,7 @@
    (Die Spracherkennung selbst braucht weiterhin Internet.) KI-Stimmen kommen aus mRead (../mread/) und werden
    gespeichert, sobald sie einmal geladen wurden – eine in mRead geladene Stimme ist auch hier sofort da.
    Bei Änderungen an Dateien die Versionsnummer erhöhen. */
-var APP = "wortmaler-app-2";
+var APP = "wortmaler-app-3";
 var BIG = "wortmaler-voices-1";
 var SHELL = [
   "./", "index.html", "apple-touch-icon.png", "favicon.png", "manifest.webmanifest", "icon-192.png",
